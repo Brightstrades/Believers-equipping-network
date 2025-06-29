@@ -145,15 +145,15 @@
         
         .ben-video-loader {
             position: absolute;
-            top: 12px;
+            bottom: 12px;
             left: 24px;
             z-index: 10;
             pointer-events: none;
             width: 54px;
             height: 54px;
             display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
+            align-items: center;
+            justify-content: center;
         }
         
         .video-container {
@@ -1111,7 +1111,7 @@ firebase.auth().onAuthStateChanged(function(user) {
                 </div>
                 
                 <div class="col-lg-4">
-                    <div class="card shadow-sm mt-4 mt-lg-0">
+                    <div class="card shadow-sm mt-4 mt-lg-5">
                         <div class="card-body">
                             <h5 class="card-title text-primary">
                                 <i class="bi bi-broadcast me-2"></i>Live Stream
@@ -1198,11 +1198,14 @@ firebase.auth().onAuthStateChanged(function(user) {
             const youtubeError = document.getElementById('youtubeError');
             
             if (youtubePlayer && videoLoader) {
+                // Ensure loader is visible initially
+                videoLoader.style.display = 'flex';
+                
                 youtubePlayer.addEventListener('load', function() {
                     // Hide loader after video loads
                     setTimeout(() => {
                         videoLoader.style.display = 'none';
-                    }, 1000);
+                    }, 2000); // Show loader for 2 seconds
                 });
                 
                 youtubePlayer.addEventListener('error', function() {
