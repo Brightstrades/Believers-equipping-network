@@ -1,1 +1,35 @@
- 
+{
+  "name": "Believers Equipping Network",
+  "short_name": "BEN Church",
+  "description": "Raising Godly Seeds - Live streams, events, prayer requests, and more",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#d90429",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "./images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["religion", "education", "social"],
+  "screenshots": [
+    {
+      "src": "./images/logo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+} 

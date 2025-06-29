@@ -1,15 +1,15 @@
 const CACHE_NAME = 'ben-church-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/about.html',
-  '/events.html',
-  '/prayer-requests.html',
-  '/donate.html',
-  '/admin.html',
-  '/style.css',
-  '/images/logo.png',
-  '/images/loader.png'
+  './',
+  './index.html',
+  './about.html',
+  './events.html',
+  './prayer-requests.html',
+  './donate.html',
+  './admin.html',
+  './style.css',
+  './images/logo.png',
+  './images/loader.png'
 ];
 
 // Install event - cache resources
@@ -41,8 +41,8 @@ self.addEventListener('push', event => {
   
   const options = {
     body: event.data ? event.data.text() : 'New update from Believers Equipping Network',
-    icon: '/images/logo.png',
-    badge: '/images/logo.png',
+    icon: './images/logo.png',
+    badge: './images/logo.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -52,12 +52,12 @@ self.addEventListener('push', event => {
       {
         action: 'explore',
         title: 'View',
-        icon: '/images/logo.png'
+        icon: './images/logo.png'
       },
       {
         action: 'close',
         title: 'Close',
-        icon: '/images/logo.png'
+        icon: './images/logo.png'
       }
     ]
   };
@@ -75,7 +75,7 @@ self.addEventListener('notificationclick', event => {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.openWindow('./')
     );
   }
 });
