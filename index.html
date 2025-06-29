@@ -42,6 +42,49 @@
             flex: 1;
         }
         
+        /* Global Page Loader */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .page-loader-content {
+            text-align: center;
+        }
+        
+        .page-loader-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: ben-bounce 2s infinite ease-in-out;
+        }
+        
+        .page-loader-text {
+            color: #d90429;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .page-loader-subtext {
+            color: #666;
+            font-size: 14px;
+        }
+        
         .top-red-header {
             background: #d90429;
             color: #fff;
@@ -565,6 +608,17 @@
 firebase.auth().onAuthStateChanged(function(user) {
     console.log('🔄 Auth state changed:', user ? 'User logged in' : 'User logged out');
     
+    // Hide page loader after auth state is determined
+    const pageLoader = document.getElementById('pageLoader');
+    if (pageLoader) {
+        setTimeout(() => {
+            pageLoader.classList.add('hidden');
+            setTimeout(() => {
+                pageLoader.style.display = 'none';
+            }, 300);
+        }, 500);
+    }
+    
     if (user) {
       console.log('✅ User is signed in:', user.email);
       
@@ -827,8 +881,32 @@ firebase.auth().onAuthStateChanged(function(user) {
   
   // Default to login form when page loads
   document.addEventListener('DOMContentLoaded', function() {
+    // Ensure login container is hidden initially until auth state is determined
+    const loginContainer = document.getElementById('loginContainer');
+    const mainContent = document.getElementById('mainContent');
+    const footer = document.querySelector('footer');
+    
+    if (loginContainer) loginContainer.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'none';
+    if (footer) footer.style.display = 'none';
+    
     showLoginForm();
     updateGreetingMessage();
+    
+    // Fallback timeout to hide loader if Firebase takes too long
+    setTimeout(() => {
+      const pageLoader = document.getElementById('pageLoader');
+      if (pageLoader && pageLoader.style.display !== 'none') {
+        console.log('⚠️ Firebase auth timeout - hiding loader');
+        pageLoader.classList.add('hidden');
+        setTimeout(() => {
+          pageLoader.style.display = 'none';
+        }, 300);
+        
+        // Show login form as fallback
+        if (loginContainer) loginContainer.style.display = 'flex';
+      }
+    }, 5000); // 5 second timeout
   });
   
   // Function to update greeting message with time and user name
@@ -861,6 +939,15 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 </head>
 <body>
+    <!-- Global Page Loader -->
+    <div id="pageLoader" class="page-loader">
+        <div class="page-loader-content">
+            <img src="images/logo.png" alt="BEN Logo" class="page-loader-logo">
+            <div class="page-loader-text">Believers Equipping Network</div>
+            <div class="page-loader-subtext">Loading...</div>
+        </div>
+    </div>
+
     <div class="top-red-header">Raising Godly Seeds</div>
 
     <!-- Header with BEN Logo -->
@@ -1101,6 +1188,33 @@ firebase.auth().onAuthStateChanged(function(user) {
                     behavior: 'smooth'
                 });
             });
+            
+            // Handle video loader
+            const videoLoader = document.querySelector('.ben-video-loader');
+            const youtubePlayer = document.getElementById('youtubePlayer');
+            const youtubeError = document.getElementById('youtubeError');
+            
+            if (youtubePlayer && videoLoader) {
+                youtubePlayer.addEventListener('load', function() {
+                    // Hide loader after video loads
+                    setTimeout(() => {
+                        videoLoader.style.display = 'none';
+                    }, 1000);
+                });
+                
+                youtubePlayer.addEventListener('error', function() {
+                    // Show error message if video fails to load
+                    videoLoader.style.display = 'none';
+                    if (youtubeError) youtubeError.style.display = 'block';
+                });
+                
+                // Fallback: hide loader after 10 seconds
+                setTimeout(() => {
+                    if (videoLoader && videoLoader.style.display !== 'none') {
+                        videoLoader.style.display = 'none';
+                    }
+                }, 10000);
+            }
     });
     </script>
 </body>
