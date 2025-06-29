@@ -35,11 +35,29 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         
         /* Main content area should grow to fill space */
         #mainContent {
             flex: 1;
+        }
+        
+        /* Prevent horizontal overflow on all containers */
+        .container, .container-fluid {
+            overflow-x: hidden;
+        }
+        
+        /* Ensure buttons and content don't cause overflow */
+        .btn {
+            white-space: nowrap;
+        }
+        
+        /* Responsive text sizing */
+        @media (max-width: 768px) {
+            .fs-6 {
+                font-size: 0.875rem !important;
+            }
         }
         
         /* Global Page Loader */
@@ -1154,7 +1172,7 @@ firebase.auth().onAuthStateChanged(function(user) {
           <div class="d-flex align-items-center justify-content-center">
               <img src="images/logo.png" alt="BEN Logo" class="ben-logo me-3">
               <div class="text-center">
-                  <span class="fw-bold fs-6">© 2025 by Believers Equipping Network: Raising Godly Seeds ❤️</span>
+                  <span class="fw-bold small">© 2025 by Believers Equipping Network: Raising Godly Seeds ❤️</span>
                   <br>
                   <span class="small text-muted">Edo State University Iyamho, Auchi, Edo State</span>
               </div>
