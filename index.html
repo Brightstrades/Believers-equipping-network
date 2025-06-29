@@ -982,12 +982,14 @@ firebase.auth().onAuthStateChanged(function(user) {
             <h2 class="text-center text-dark mb-4">Account Settings</h2>
             <form id="accountSettingsForm" autocomplete="off" onsubmit="return updateAccountSettings()">
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Display Name</label>
-                    <input id="settingsDisplayName" type="text" placeholder="Full Name" class="form-control">
+                    <label class="form-label fw-bold">Full Name</label>
+                    <input id="settingsDisplayName" type="text" placeholder="Enter your full name" class="form-control">
+                    <small class="text-muted">This is how the site will greet you</small>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">Email</label>
-                    <input id="settingsEmail" type="email" placeholder="Email" class="form-control">
+                    <input id="settingsEmail" type="email" placeholder="Email" class="form-control" readonly>
+                    <small class="text-muted">Email cannot be changed after registration</small>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">New Password</label>
@@ -1216,6 +1218,130 @@ firebase.auth().onAuthStateChanged(function(user) {
                 }, 10000);
             }
     });
+    
+    // Account Settings Functions
+    function showAccountSettings() {
+        const modal = document.getElementById('accountSettingsModal');
+        const currentUser = firebase.auth().currentUser;
+        
+        if (!currentUser) {
+            alert('Please log in to access account settings');
+            return;
+        }
+        
+        // Populate form with current user data
+        const displayNameInput = document.getElementById('settingsDisplayName');
+        const emailInput = document.getElementById('settingsEmail');
+        const passwordInput = document.getElementById('settingsPassword');
+        
+        if (displayNameInput) displayNameInput.value = currentUser.displayName || '';
+        if (emailInput) emailInput.value = currentUser.email || '';
+        if (passwordInput) passwordInput.value = '';
+        
+        // Show modal
+        if (modal) modal.style.display = 'flex';
+        
+        // Hide profile dropdown
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown) dropdown.style.display = 'none';
+    }
+    
+    function closeAccountSettings() {
+        const modal = document.getElementById('accountSettingsModal');
+        if (modal) modal.style.display = 'none';
+        
+        // Clear error/success messages
+        const errorDiv = document.getElementById('accountSettingsError');
+        const successDiv = document.getElementById('accountSettingsSuccess');
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (successDiv) successDiv.style.display = 'none';
+    }
+    
+    async function updateAccountSettings() {
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+            alert('Please log in to update account settings');
+            return false;
+        }
+        
+        const displayName = document.getElementById('settingsDisplayName').value.trim();
+        const password = document.getElementById('settingsPassword').value;
+        
+        const errorDiv = document.getElementById('accountSettingsError');
+        const successDiv = document.getElementById('accountSettingsSuccess');
+        
+        // Clear previous messages
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (successDiv) successDiv.style.display = 'none';
+        
+        try {
+            // Update display name if changed
+            if (displayName && displayName !== currentUser.displayName) {
+                await currentUser.updateProfile({
+                    displayName: displayName
+                });
+                console.log('✅ Display name updated');
+            }
+            
+            // Update password if provided
+            if (password && password.length >= 6) {
+                await currentUser.updatePassword(password);
+                console.log('✅ Password updated');
+            }
+            
+            // Update user profile in database
+            await saveUserProfile(currentUser);
+            
+            // Update UI elements
+            updateProfileMenu();
+            updateGreetingMessage();
+            
+            // Show success message
+            if (successDiv) {
+                successDiv.textContent = 'Account settings updated successfully!';
+                successDiv.style.display = 'block';
+            }
+            
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                closeAccountSettings();
+            }, 2000);
+            
+        } catch (error) {
+            console.error('❌ Error updating account settings:', error);
+            if (errorDiv) {
+                errorDiv.textContent = 'Error updating account: ' + error.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        return false; // Prevent form submission
+    }
+    
+    // Update profile menu with current user data
+    function updateProfileMenu() {
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) return;
+        
+        const profileName = document.getElementById('profileDropdownName');
+        const profileEmail = document.getElementById('profileDropdownEmail');
+        const profileAvatar = document.getElementById('profileDropdownAvatar');
+        
+        if (profileName) {
+            profileName.textContent = currentUser.displayName || 'User';
+        }
+        if (profileEmail) {
+            profileEmail.textContent = currentUser.email || '';
+        }
+        if (profileAvatar) {
+            if (currentUser.photoURL) {
+                profileAvatar.src = currentUser.photoURL;
+            } else {
+                const name = currentUser.displayName || currentUser.email || 'User';
+                profileAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=eee&color=111`;
+            }
+        }
+    }
     </script>
 </body>
 </html>
