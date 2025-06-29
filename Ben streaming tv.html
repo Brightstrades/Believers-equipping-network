@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Believers Equipping Network</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom styles for specific animations and overrides -->
+    <style>
+        @keyframes ben-bounce {
+            0%   { transform: translateY(0); }
+            50%  { transform: translateY(-8px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .ben-bounce-loader {
+            animation: ben-bounce 1.1s infinite cubic-bezier(.68,-0.55,.27,1.55);
+            will-change: transform;
+        }
+        
+        .ben-bounce-loader-img {
+            width: 54px;
+            height: 54px;
+            animation: ben-bounce 2s infinite ease-in-out;
+            user-select: none;
+            pointer-events: none;
+            display: block;
+        }
+        
+        /* Ensure body takes full height */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Main content area should grow to fill space */
+        #mainContent {
+            flex: 1;
+        }
+        
+        .top-red-header {
+            background: #d90429;
+            color: #fff;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 15px;
+            padding: 8px 0 6px 20px;
+            margin-bottom: 0;
+        }
+        
+        .ben-logo {
+            height: 48px;
+            width: auto;
+        }
+        
+        .profile-menu-icon {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .profile-avatar-large {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(2px);
+        }
+        
+        /* Hide footer when auth modal is active */
+        /* .auth-modal ~ footer,
+        .auth-modal + footer {
+            display: none !important;
+        } */
+        
+        .auth-box {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+            border: 1.5px solid rgba(0,0,0,0.08);
+            max-width: 400px;
+            width: 100%;
+            margin: 40px auto 0 auto;
+            padding: 36px 32px 32px 32px;
+        }
+        
+        .ben-video-loader {
+            position: absolute;
+            top: 12px;
+            left: 24px;
+            z-index: 10;
+            pointer-events: none;
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        
+        .video-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 450px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+            border-radius: 12px;
+        }
+        
+        .profile-dropdown {
+            position: absolute;
+            top: 48px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            min-width: 220px;
+            max-width: 95vw;
+            width: max-content;
+            z-index: 1000;
+            padding: 0;
+            display: none;
+            overflow-x: auto;
+        }
+        
+        .profile-dropdown-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .profile-email {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .profile-dropdown-links {
+            padding: 0;
+        }
+        
+        .profile-link {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        
+        .profile-link:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .logout-link {
+            color: #d90429 !important;
+        }
+        
+        .ben-footer {
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            margin-top: auto;
+        }
+        
+        .ben-footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #d90429;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(217, 4, 41, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top:hover {
+            background: #b00020;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(217, 4, 41, 0.4);
+        }
+        
+        .scroll-to-top.show {
+            display: flex;
+        }
+        
+        @media (max-width: 600px) {
+            .auth-box {
+                padding: 22px 8px 18px 8px;
+                max-width: 98vw;
+            }
+            
+            .profile-dropdown {
+                position: fixed;
+                top: 64px;
+                right: 24px;
+                min-width: 240px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+                border-radius: 14px;
+            }
+        }
+        
+        /* Navigation button hover effects */
+        .nav-pills .nav-link {
+            background-color: #111 !important;
+            color: white !important;
+            border: 1px solid #111 !important;
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: #d90429 !important;
+            color: white !important;
+            border-color: #d90429 !important;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: #d90429 !important;
+            color: white !important;
+            border-color: #d90429 !important;
+        }
+        
+        /* Style for YouTube error message */
+        .youtube-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+    </style>
+    <!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<!-- Firebase Analytics -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+<!-- Firebase Auth (for login) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0XEfr4spY_xnxXE0xh7flZqbIlRQ4O20",
+    authDomain: "believersequippingnetworktv.firebaseapp.com",
+    projectId: "believersequippingnetworktv",
+    storageBucket: "believersequippingnetworktv.firebasestorage.app",
+    messagingSenderId: "935792507815",
+    appId: "1:935792507815:web:8f5cdddd87b8bcd97a5482",
+    measurementId: "G-9CLDLB3RQ6"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  
+  // Set persistence to LOCAL to maintain login state across page refreshes
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+  // Firebase Auth State Listener - CRITICAL for handling login/logout
+firebase.auth().onAuthStateChanged(function(user) {
+    console.log('🔄 Auth state changed:', user ? 'User logged in' : 'User logged out');
+    
+    if (user) {
+      console.log('✅ User is signed in:', user.email);
+      // Update profile menu
+      var profileName = document.getElementById('profileDropdownName');
+      var profileEmail = document.getElementById('profileDropdownEmail');
+      var profileAvatar = document.getElementById('profileDropdownAvatar');
+      
+      if (profileName) profileName.textContent = user.displayName || 'User';
+      if (profileEmail) profileEmail.textContent = user.email || '';
+      if (profileAvatar && user.photoURL) {
+        profileAvatar.src = user.photoURL;
+      } else if (profileAvatar) {
+        profileAvatar.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName || user.email || 'User') + '&background=eee&color=111';
+      }
+      
+      // Show main content, hide login
+      var loginContainer = document.getElementById('loginContainer');
+      var mainContent = document.getElementById('mainContent');
+      var footer = document.querySelector('footer');
+      
+      if (loginContainer) loginContainer.style.display = 'none';
+      if (mainContent) mainContent.style.display = 'block';
+      if (footer) footer.style.display = 'block';
+      
+      // Update greeting message with user's name
+      updateGreetingMessage();
+  } else {
+      console.log('❌ User is signed out');
+      // Show login, hide main content
+      var loginContainer = document.getElementById('loginContainer');
+      var mainContent = document.getElementById('mainContent');
+      var footer = document.querySelector('footer');
+      
+      if (loginContainer) loginContainer.style.display = 'flex';
+      if (mainContent) mainContent.style.display = 'none';
+      if (footer) footer.style.display = 'none';
+      
+      // Reset profile menu
+      var profileName = document.getElementById('profileDropdownName');
+      var profileEmail = document.getElementById('profileDropdownEmail');
+      var profileAvatar = document.getElementById('profileDropdownAvatar');
+      
+      if (profileName) profileName.textContent = 'User';
+      if (profileEmail) profileEmail.textContent = 'user@email.com';
+      if (profileAvatar) profileAvatar.src = 'https://ui-avatars.com/api/?name=User&background=eee&color=111';
+      
+      // Update greeting message to default
+      updateGreetingMessage();
+    }
+  });
+  
+  // Handle redirect result when page loads (for Google login)
+  firebase.auth().getRedirectResult().then(function(result) {
+    if (result.user) {
+      console.log('✅ Google login successful via redirect for:', result.user.email);
+    }
+  }).catch(function(error) {
+    console.error('❌ Redirect result error:', error);
+  });
+  
+  // Google login function - defined early so it's available
+  function loginWithGoogle() {
+    console.log('🔐 Attempting Google login...');
+    
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('email');
+    provider.addScope('profile');
+    
+    firebase.auth().signInWithPopup(provider)
+      .then(function(result) {
+        console.log('✅ Google login successful for:', result.user.email);
+      })
+      .catch(function(error) {
+        console.error('❌ Google login error:', error);
+        
+        // If popup fails, try redirect method
+        if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+          console.log('🔄 Trying redirect method...');
+          firebase.auth().signInWithRedirect(provider);
+          return;
+        }
+        
+        var errorDiv = document.getElementById('loginError');
+        if (errorDiv) {
+          var errorMessage = 'Google login failed. ';
+          switch(error.code) {
+            case 'auth/popup-closed-by-user':
+              errorMessage += 'Login was cancelled.';
+              break;
+            case 'auth/popup-blocked':
+              errorMessage += 'Popup was blocked. Please allow popups for this site.';
+              break;
+            case 'auth/cancelled-popup-request':
+              errorMessage += 'Login was cancelled.';
+              break;
+            case 'auth/account-exists-with-different-credential':
+              errorMessage += 'An account already exists with this email using a different sign-in method.';
+              break;
+            case 'auth/operation-not-allowed':
+              errorMessage += 'Google sign-in is not enabled. Please contact support.';
+              break;
+            case 'auth/unauthorized-domain':
+              errorMessage += 'This domain is not authorized for Google sign-in.';
+              break;
+            default:
+              errorMessage += error.message;
+          }
+          errorDiv.textContent = errorMessage;
+          errorDiv.style.display = 'block';
+        }
+      });
+  }
+  
+  // Auth UI functions - defined early
+  function showLoginForm() {
+    var loginForm = document.getElementById('loginForm');
+    var signupForm = document.getElementById('signupForm');
+    var footer = document.querySelector('footer');
+    if (loginForm) loginForm.style.display = '';
+    if (signupForm) signupForm.style.display = 'none';
+    if (footer) footer.style.display = 'none';
+  }
+  
+  function showSignupForm() {
+    var loginForm = document.getElementById('loginForm');
+    var signupForm = document.getElementById('signupForm');
+    var footer = document.querySelector('footer');
+    if (loginForm) loginForm.style.display = 'none';
+    if (signupForm) signupForm.style.display = '';
+    if (footer) footer.style.display = 'none';
+  }
+  
+  // Login function - defined early
+  function login() {
+    var email = document.getElementById('loginEmail').value;
+    var password = document.getElementById('loginPassword').value;
+    var errorDiv = document.getElementById('loginError');
+    if (errorDiv) errorDiv.style.display = 'none';
+    
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .catch(function(error) {
+        if (errorDiv) {
+          errorDiv.textContent = error.message;
+          errorDiv.style.display = 'block';
+        }
+      });
+  }
+
+  // Signup function - defined early
+  function signup() {
+    var email = document.getElementById('signupEmail').value;
+    var password = document.getElementById('signupPassword').value;
+    var passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+    var errorDiv = document.getElementById('signupError');
+    var successDiv = document.getElementById('signupSuccess');
+    if (errorDiv) errorDiv.style.display = 'none';
+    if (successDiv) successDiv.style.display = 'none';
+    
+    if (!email || !password || !passwordConfirm) {
+      if (errorDiv) {
+        errorDiv.textContent = 'Please fill in all fields.';
+        errorDiv.style.display = 'block';
+      }
+      return;
+    }
+    if (password.length < 6) {
+      if (errorDiv) {
+        errorDiv.textContent = 'Password must be at least 6 characters.';
+        errorDiv.style.display = 'block';
+      }
+      return;
+    }
+    if (password !== passwordConfirm) {
+      if (errorDiv) {
+        errorDiv.textContent = 'Passwords do not match.';
+        errorDiv.style.display = 'block';
+      }
+      return;
+    }
+    
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(function(userCredential) {
+        if (successDiv) {
+          successDiv.textContent = 'Account created! You can now log in.';
+          successDiv.style.display = 'block';
+        }
+        if (errorDiv) errorDiv.style.display = 'none';
+        setTimeout(function() {
+          showLoginForm();
+        }, 1500);
+      })
+      .catch(function(error) {
+        if (errorDiv) {
+          errorDiv.textContent = error.message;
+          errorDiv.style.display = 'block';
+        }
+      });
+  }
+
+  // Logout function - defined early
+  function logout() {
+    firebase.auth().signOut();
+  }
+  
+  // Profile menu function - defined early
+  function toggleProfileMenu() {
+    var dropdown = document.getElementById('profileDropdown');
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+  }
+  
+  // Performance optimization functions
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+  
+  function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    }
+  }
+  
+  // Optimized ensureMainContentVisible with error handling
+  const debouncedEnsureMainContent = debounce(function() {
+    try {
+      const currentUser = firebase.auth().currentUser;
+      if (currentUser) {
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+        const footer = document.querySelector('footer');
+        
+        if (loginContainer) loginContainer.style.display = 'none';
+        if (mainContent) mainContent.style.display = 'block';
+        if (footer) footer.style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Error in ensureMainContentVisible:', error);
+    }
+  }, 100);
+  
+  // Default to login form when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    showLoginForm();
+    updateGreetingMessage();
+  });
+  
+  // Function to update greeting message with time and user name
+  function updateGreetingMessage() {
+    const greetingElement = document.getElementById('greetingMessage');
+    if (!greetingElement) return;
+    
+    const now = new Date();
+    const hour = now.getHours();
+    const currentUser = firebase.auth().currentUser;
+    
+    let timeGreeting = '';
+    if (hour < 12) {
+      timeGreeting = 'Good Morning';
+    } else if (hour < 17) {
+      timeGreeting = 'Good Afternoon';
+    } else {
+      timeGreeting = 'Good Evening';
+    }
+    
+    let userName = 'Friend';
+    if (currentUser) {
+      userName = currentUser.displayName || currentUser.email.split('@')[0] || 'Friend';
+    }
+    
+    const greetingText = `${timeGreeting}, ${userName}!`;
+    greetingElement.textContent = greetingText;
+  }
+</script>
+
+</head>
+<body>
+    <div class="top-red-header">Raising Godly Seeds</div>
+
+    <!-- Header with BEN Logo -->
+    <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="height:56px; min-height:0;">
+        <div class="container-fluid px-3">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <div class="ms-auto position-relative">
+                <button id="profileMenuBtn" class="btn btn-link p-0" onclick="toggleProfileMenu()">
+                <svg class="profile-menu-icon" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="18" cy="18" r="18" fill="#eee"/>
+                  <path d="M18 18c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.33 0-10 1.665-10 5v2h20v-2c0-3.335-6.67-5-10-5z" fill="#888"/>
+                </svg>
+            </button>
+                <div id="profileDropdown" class="profile-dropdown">
+                <div class="profile-dropdown-header">
+                    <img id="profileDropdownAvatar" src="https://ui-avatars.com/api/?name=User&background=eee&color=111" alt="Profile" class="profile-avatar-large">
+                    <div id="profileDropdownName" class="profile-name">User</div>
+                    <div id="profileDropdownEmail" class="profile-email">user@email.com</div>
+                </div>
+                <div class="profile-dropdown-links">
+                    <button class="profile-link" onclick="showAccountSettings()">Account Settings</button>
+                    <button class="profile-link logout-link" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Account Settings Modal -->
+    <div id="accountSettingsModal" class="auth-modal" style="display:none;">
+        <div class="auth-box">
+            <h2 class="text-center text-dark mb-4">Account Settings</h2>
+            <form id="accountSettingsForm" autocomplete="off" onsubmit="return updateAccountSettings()">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Display Name</label>
+                    <input id="settingsDisplayName" type="text" placeholder="Full Name" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <input id="settingsEmail" type="email" placeholder="Email" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">New Password</label>
+                    <input id="settingsPassword" type="password" placeholder="Leave blank to keep current" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-dark w-100 mb-2">Save Changes</button>
+                <button type="button" onclick="closeAccountSettings()" class="btn btn-outline-danger w-100">Cancel</button>
+                <div id="accountSettingsError" class="text-danger mt-3 text-center" style="display:none;"></div>
+                <div id="accountSettingsSuccess" class="text-success mt-2 text-center" style="display:none;"></div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Login Form (hidden by default) -->
+    <div id="loginContainer" class="auth-modal">
+        <div class="auth-box">
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2 class="text-center text-dark mb-4">Sign In to Continue</h2>
+                <div class="mb-3">
+                    <input id="loginEmail" type="email" placeholder="Email" class="form-control">
+                </div>
+                <div class="mb-4">
+                    <input id="loginPassword" type="password" placeholder="Password" class="form-control">
+                </div>
+                <button onclick="login()" class="btn btn-dark w-100 mb-3">Login</button>
+                <div class="text-center text-muted my-3">or</div>
+                <button onclick="loginWithGoogle()" class="btn btn-outline-secondary w-100 mb-3 d-flex align-items-center justify-content-center gap-2">
+                    <img src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' alt='Google' style='width:22px;height:22px;'> Sign in with Google
+                </button>
+                <div class="text-center mt-4">
+                    <span class="text-muted">Don't have an account?</span>
+                    <a href="#" onclick="showSignupForm();return false;" class="text-danger fw-bold ms-1">Sign Up</a>
+                </div>
+                <div id="loginError" class="text-danger mt-3 text-center" style="display:none;"></div>
+            </div>
+            <!-- Signup Form -->
+            <div id="signupForm" style="display:none;">
+                <h2 class="text-center text-dark mb-4">Create an Account</h2>
+                <div class="mb-3">
+                    <input id="signupEmail" type="email" placeholder="Email" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <input id="signupPassword" type="password" placeholder="Password (min 6 chars)" class="form-control">
+                </div>
+                <div class="mb-4">
+                    <input id="signupPasswordConfirm" type="password" placeholder="Confirm Password" class="form-control">
+                </div>
+                <button onclick="signup()" class="btn btn-dark w-100 mb-3">Sign Up</button>
+                <div class="text-center text-muted my-3">or</div>
+                <button onclick="loginWithGoogle()" class="btn btn-outline-secondary w-100 mb-3 d-flex align-items-center justify-content-center gap-2">
+                    <img src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' alt='Google' style='width:22px;height:22px;'> Sign up with Google
+                </button>
+                <div class="text-center mt-4">
+                    <span class="text-muted">Already have an account?</span>
+                    <a href="#" onclick="showLoginForm();return false;" class="text-danger fw-bold ms-1">Login</a>
+                </div>
+                <div id="signupError" class="text-danger mt-3 text-center" style="display:none;"></div>
+                <div id="signupSuccess" class="text-success mt-2 text-center" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainContent" style="display:none;">
+        <div class="container-fluid px-4 py-3">
+            
+            <!-- Welcome Message -->
+            <div class="text-center mb-4">
+                <h2 class="text-dark mb-0" id="greetingMessage" style="font-size: 1.5rem; line-height: 1.2;">Welcome to BEN</h2>
+                <p class="text-muted" style="font-size: small;">Join us for live services, prayer, and fellowship</p>
+            </div>
+            
+            <!-- Social Media Links -->
+            <div class="text-center mb-4">
+                <h6 class="text-muted mb-3">Follow Us on Social Media</h6>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="https://facebook.com/believersequippingnetwork" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://youtube.com/@believersequippingnetwork" target="_blank" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-youtube"></i>
+                    </a>
+                    <a href="https://instagram.com/believersequippingnetwork" target="_blank" class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://twitter.com/benchurch" target="_blank" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-twitter-x"></i>
+                    </a>
+                    <a href="https://tiktok.com/@believersequippingnetwork" target="_blank" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-tiktok"></i>
+                    </a>
+                    <a href="https://wa.me/2347035399975" target="_blank" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        
+            <!-- Main Content Area -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="video-container mt-4 mt-lg-0">
+                <div class="ben-video-loader">
+                    <img src="images/loader.png" alt="Loading..." class="ben-bounce-loader-img">
+                </div>
+                        <div class="youtube-error" id="youtubeError" style="display: none;">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            This video is not available at the moment
+                        </div>
+                        <iframe 
+                            id="youtubePlayer"
+                            width="100%" 
+                            height="450" 
+                            src="https://www.youtube.com/embed/live_stream?channel=UCQqQqQqQqQqQqQqQqQqQqQ&autoplay=1&mute=1" 
+                            frameborder="0" 
+                            allowfullscreen
+                            style="border-radius: 12px;"
+                        ></iframe>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card shadow-sm mt-4 mt-lg-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="bi bi-broadcast me-2"></i>Live Stream
+                            </h5>
+                            <p class="card-text">Join us for our live Sunday service and midweek programs.</p>
+                            <div class="d-grid gap-2">
+                                <a href="events.html" class="btn btn-outline-primary">
+                                    <i class="bi bi-calendar-event me-1"></i>View Schedule
+                                </a>
+                                <a href="prayer-requests.html" class="btn btn-outline-danger">
+                                    <i class="bi bi-heart-fill me-1"></i>Submit Prayer Request
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">
+                                <i class="bi bi-people-fill me-2"></i>Get Connected
+                            </h5>
+                            <p class="card-text">Stay connected with our church family and ministry updates.</p>
+                            <div class="d-grid gap-2">
+                                <a href="about.html" class="btn btn-outline-info">
+                                    <i class="bi bi-info-circle me-1"></i>About Our Church
+                                </a>
+                                <a href="donate.html" class="btn btn-outline-warning">
+                                    <i class="bi bi-gift-fill me-1"></i>Support Our Ministry
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+    </div>
+
+    <footer class="bg-light border-top py-3 mt-5">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="images/logo.png" alt="BEN Logo" class="ben-logo me-3" style="height:36px; width:auto;">
+                <div class="text-center">
+                    <span class="fw-bold small">© 2025 by Believers Equipping Network: Raising Godly Seeds ❤️</span>
+                    <br>
+                    <span class="small text-muted">Edo University Iyamho, Auchi, Edo State</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" title="Scroll to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+    
+    <script>
+        // Scroll to Top functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            
+            // Show/hide button based on scroll position
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('show');
+            } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // Scroll to top when button is clicked
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+    });
+    </script>
+</body>
+</html>

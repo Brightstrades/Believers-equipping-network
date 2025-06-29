@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events | Believers Equipping Network</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <style>
+        .top-red-header {
+            background: #d90429;
+            color: #fff;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 15px;
+            padding: 8px 0 6px 20px;
+            margin-bottom: 0;
+        }
+        
+        .ben-logo {
+            height: 48px;
+            width: auto;
+        }
+        
+        .nav-pills .nav-link {
+            background-color: #111 !important;
+            color: white !important;
+            border: 1px solid #111 !important;
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: #d90429 !important;
+            color: white !important;
+            border-color: #d90429 !important;
+        }
+        
+        .ben-footer {
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #d90429;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(217, 4, 41, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top:hover {
+            background: #b00020;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(217, 4, 41, 0.4);
+        }
+        
+        .scroll-to-top.show {
+            display: flex;
+        }
+        
+        .event-card {
+            transition: transform 0.2s;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .event-date {
+            background: #d90429;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-red-header">Raising Godly Seeds</div>
+
+    <!-- Header with BEN Logo -->
+    <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="height:56px; min-height:0;">
+        <div class="container-fluid px-3">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <div class="ms-auto">
+                <a href="https://facebook.com/believersequippingnetwork" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://youtube.com/@believersequippingnetwork" target="_blank" class="btn btn-outline-danger btn-sm me-2">
+                    <i class="bi bi-youtube"></i>
+                </a>
+                <a href="https://instagram.com/believersequippingnetwork" target="_blank" class="btn btn-outline-warning btn-sm me-2">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://wa.me/2347035399975" target="_blank" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-4">
+        <!-- Page Navigation -->
+        <div class="text-center mb-4">
+            <h6 class="text-muted mb-3">Navigate to Other Pages</h6>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <a href="Ben streaming tv.html" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-house-fill me-1"></i>Home
+                </a>
+                <a href="about.html" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-info-circle me-1"></i>About
+                </a>
+                <a href="prayer-requests.html" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-heart-fill me-1"></i>Prayer Requests
+                </a>
+                <a href="donate.html" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-gift-fill me-1"></i>Donate
+                </a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="text-center mb-5">
+                    <h1 class="text-success fw-bold">
+                        <i class="bi bi-calendar-event me-2"></i>Church Events
+                    </h1>
+                    <p class="text-muted fs-5">Join us for fellowship, worship, and spiritual growth</p>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="mb-5">
+                    <h3 class="text-success mb-4">Upcoming Events</h3>
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card event-card h-100 border-success">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="event-date">
+                                                <div class="fw-bold">SUN</div>
+                                                <div class="fs-4">9</div>
+                                                <div class="small">MAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-9">
+                                            <h5 class="card-title text-success">Sunday Service</h5>
+                                            <p class="card-text">Join us for worship, prayer, and the Word of God</p>
+                                            <div class="d-flex align-items-center text-muted small mb-2">
+                                                <i class="bi bi-clock me-1"></i>
+                                                <span>9:00 AM - 12:00 PM</span>
+                                            </div>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i class="bi bi-geo-alt me-1"></i>
+                                                <span>Main Auditorium</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <div class="card event-card h-100 border-primary">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="event-date" style="background: #0d6efd;">
+                                                <div class="fw-bold">WED</div>
+                                                <div class="fs-4">12</div>
+                                                <div class="small">MAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-9">
+                                            <h5 class="card-title text-primary">Prayer Meeting</h5>
+                                            <p class="card-text">Midweek prayer and intercession for our church and community</p>
+                                            <div class="d-flex align-items-center text-muted small mb-2">
+                                                <i class="bi bi-clock me-1"></i>
+                                                <span>6:00 PM - 7:30 PM</span>
+                                            </div>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i class="bi bi-geo-alt me-1"></i>
+                                                <span>Prayer Room</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <div class="card event-card h-100 border-warning">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="event-date" style="background: #ffc107; color: #000;">
+                                                <div class="fw-bold">FRI</div>
+                                                <div class="fs-4">15</div>
+                                                <div class="small">MAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-9">
+                                            <h5 class="card-title text-warning">Youth Fellowship</h5>
+                                            <p class="card-text">Special gathering for young people with games, worship, and Bible study</p>
+                                            <div class="d-flex align-items-center text-muted small mb-2">
+                                                <i class="bi bi-clock me-1"></i>
+                                                <span>5:00 PM - 8:00 PM</span>
+                                            </div>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i class="bi bi-geo-alt me-1"></i>
+                                                <span>Youth Hall</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 mb-4">
+                            <div class="card event-card h-100 border-info">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="event-date" style="background: #0dcaf0;">
+                                                <div class="fw-bold">SAT</div>
+                                                <div class="fs-4">16</div>
+                                                <div class="small">MAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-9">
+                                            <h5 class="card-title text-info">Bible Study</h5>
+                                            <p class="card-text">In-depth study of God's Word with Pastor Ben</p>
+                                            <div class="d-flex align-items-center text-muted small mb-2">
+                                                <i class="bi bi-clock me-1"></i>
+                                                <span>4:00 PM - 6:00 PM</span>
+                                            </div>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i class="bi bi-geo-alt me-1"></i>
+                                                <span>Conference Room</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Registration -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">Register for Events</h4>
+                        
+                        <form id="eventForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Select Event</label>
+                                    <select class="form-select" id="eventSelect" required>
+                                        <option value="">Choose an event</option>
+                                        <option value="sunday-service">Sunday Service</option>
+                                        <option value="prayer-meeting">Prayer Meeting</option>
+                                        <option value="youth-fellowship">Youth Fellowship</option>
+                                        <option value="bible-study">Bible Study</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Number of Attendees</label>
+                                    <input type="number" class="form-control" id="attendeeCount" placeholder="How many people?" min="1" max="10" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Your Name</label>
+                                    <input type="text" class="form-control" id="eventName" placeholder="Your full name" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Phone Number</label>
+                                    <input type="tel" class="form-control" id="eventPhone" placeholder="Your phone number" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="eventEmail" placeholder="your.email@example.com" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Special Requirements</label>
+                                <textarea class="form-control" id="eventRequirements" rows="3" placeholder="Any special needs or requirements..."></textarea>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-calendar-check me-2"></i>Register for Event
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="eventSuccess" class="alert alert-success mt-3" style="display:none;">
+                            <i class="bi bi-check-circle me-2"></i>Registration successful! You will receive a confirmation email shortly.
+                        </div>
+                        <div id="eventError" class="alert alert-danger mt-3" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <!-- Regular Schedule -->
+                <div class="mt-5">
+                    <h3 class="text-primary mb-4">Regular Schedule</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Weekly Services</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><strong>Sunday:</strong> 9:00 AM - 12:00 PM (Main Service)</li>
+                                        <li class="mb-2"><strong>Wednesday:</strong> 6:00 PM - 7:30 PM (Prayer Meeting)</li>
+                                        <li class="mb-2"><strong>Friday:</strong> 5:00 PM - 8:00 PM (Youth Fellowship)</li>
+                                        <li class="mb-2"><strong>Saturday:</strong> 4:00 PM - 6:00 PM (Bible Study)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Special Ministries</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><strong>Children's Ministry:</strong> Every Sunday during service</li>
+                                        <li class="mb-2"><strong>Women's Fellowship:</strong> First Saturday of the month</li>
+                                        <li class="mb-2"><strong>Men's Ministry:</strong> Second Saturday of the month</li>
+                                        <li class="mb-2"><strong>Choir Practice:</strong> Thursdays 7:00 PM</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="ben-footer">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="images/logo.png" alt="BEN Logo" class="ben-logo me-3">
+                <div class="text-center">
+                    <span class="fw-bold fs-6">© 2025 by Believers Equipping Network: Raising Godly Seeds ❤️</span>
+                    <br>
+                    <span class="small text-muted">Edo University Iyamho, Auchi, Edo State</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" title="Scroll to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+    
+    <script>
+        // Scroll to Top functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            
+            // Show/hide button based on scroll position
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // Scroll to top when button is clicked
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventForm = document.getElementById('eventForm');
+            if (eventForm) {
+                eventForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const event = document.getElementById('eventSelect').value;
+                    const attendees = document.getElementById('attendeeCount').value;
+                    const name = document.getElementById('eventName').value;
+                    const phone = document.getElementById('eventPhone').value;
+                    const email = document.getElementById('eventEmail').value;
+                    
+                    if (!event || !attendees || !name || !phone || !email) {
+                        document.getElementById('eventError').textContent = 'Please fill in all required fields.';
+                        document.getElementById('eventError').style.display = 'block';
+                        document.getElementById('eventSuccess').style.display = 'none';
+                        return;
+                    }
+                    
+                    // Here you would typically send to your backend
+                    // For now, just show success message
+                    document.getElementById('eventSuccess').style.display = 'block';
+                    document.getElementById('eventError').style.display = 'none';
+                    eventForm.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(function() {
+                        document.getElementById('eventSuccess').style.display = 'none';
+                    }, 5000);
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

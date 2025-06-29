@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate | Believers Equipping Network</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <style>
+        .top-red-header {
+            background: #d90429;
+            color: #fff;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 15px;
+            padding: 8px 0 6px 20px;
+            margin-bottom: 0;
+        }
+        
+        .ben-logo {
+            height: 48px;
+            width: auto;
+        }
+        
+        .nav-pills .nav-link {
+            background-color: #111 !important;
+            color: white !important;
+            border: 1px solid #111 !important;
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: #d90429 !important;
+            color: white !important;
+            border-color: #d90429 !important;
+        }
+        
+        .ben-footer {
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+        
+        .donation-card {
+            transition: transform 0.2s;
+        }
+        
+        .donation-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #d90429;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(217, 4, 41, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top:hover {
+            background: #b00020;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(217, 4, 41, 0.4);
+        }
+        
+        .scroll-to-top.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-red-header">Raising Godly Seeds</div>
+
+    <!-- Header with BEN Logo -->
+    <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="height:56px; min-height:0;">
+        <div class="container-fluid px-3">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <div class="ms-auto">
+                <a href="https://facebook.com/believersequippingnetwork" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://youtube.com/@believersequippingnetwork" target="_blank" class="btn btn-outline-danger btn-sm me-2">
+                    <i class="bi bi-youtube"></i>
+                </a>
+                <a href="https://instagram.com/believersequippingnetwork" target="_blank" class="btn btn-outline-warning btn-sm me-2">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://wa.me/2347035399975" target="_blank" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-4">
+        <!-- Page Navigation -->
+        <div class="text-center mb-4">
+            <h6 class="text-muted mb-3">Navigate to Other Pages</h6>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <a href="Ben streaming tv.html" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-house-fill me-1"></i>Home
+                </a>
+                <a href="about.html" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-info-circle me-1"></i>About
+                </a>
+                <a href="prayer-requests.html" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-heart-fill me-1"></i>Prayer Requests
+                </a>
+                <a href="events.html" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-calendar-event me-1"></i>Events
+                </a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="text-center mb-5">
+                    <h1 class="text-warning fw-bold">
+                        <i class="bi bi-gift-fill me-2"></i>Support Our Ministry
+                    </h1>
+                    <p class="text-muted fs-5">Your generous donations help us continue our mission of raising godly seeds</p>
+                </div>
+
+                <!-- Donation Options -->
+                <div class="row mb-5">
+                    <div class="col-md-4 mb-4">
+                        <div class="card donation-card h-100 border-warning">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-heart-fill text-danger" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title text-warning">Tithe</h5>
+                                <p class="card-text">Faithful giving of 10% of your income to support God's work</p>
+                                <button class="btn btn-warning" onclick="selectDonation('tithe')">
+                                    Give Tithe
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card donation-card h-100 border-success">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-gift-fill text-success" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title text-success">Offering</h5>
+                                <p class="card-text">Special offerings to support specific ministry needs and projects</p>
+                                <button class="btn btn-success" onclick="selectDonation('offering')">
+                                    Give Offering
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card donation-card h-100 border-primary">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-building-fill text-primary" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="card-title text-primary">Building Fund</h5>
+                                <p class="card-text">Support our church building and facility development projects</p>
+                                <button class="btn btn-primary" onclick="selectDonation('building')">
+                                    Support Building
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donation Form -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">Make Your Donation</h4>
+                        
+                        <form id="donationForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Donation Type</label>
+                                    <select class="form-select" id="donationType" required>
+                                        <option value="">Select donation type</option>
+                                        <option value="tithe">Tithe</option>
+                                        <option value="offering">Offering</option>
+                                        <option value="building">Building Fund</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Amount (₦)</label>
+                                    <input type="number" class="form-control" id="donationAmount" placeholder="Enter amount" min="100" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Your Name</label>
+                                <input type="text" class="form-control" id="donorName" placeholder="Your full name" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="donorEmail" placeholder="your.email@example.com" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" class="form-control" id="donorPhone" placeholder="Your phone number">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Message (Optional)</label>
+                                <textarea class="form-control" id="donationMessage" rows="3" placeholder="Any special message or prayer request..."></textarea>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-warning btn-lg">
+                                    <i class="bi bi-credit-card me-2"></i>Proceed to Payment
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="donationSuccess" class="alert alert-success mt-3" style="display:none;">
+                            <i class="bi bi-check-circle me-2"></i>Thank you for your generous donation! You will receive a confirmation email shortly.
+                        </div>
+                        <div id="donationError" class="alert alert-danger mt-3" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods Info -->
+                <div class="mt-5">
+                    <h4 class="text-center mb-4">Payment Methods</h4>
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <i class="bi bi-credit-card text-primary" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Credit/Debit Cards</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <i class="bi bi-phone text-success" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Mobile Money</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <i class="bi bi-bank text-info" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Bank Transfer</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <i class="bi bi-cash text-warning" style="font-size: 2rem;"></i>
+                            <p class="mt-2">Cash at Church</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="ben-footer">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="images/logo.png" alt="BEN Logo" class="ben-logo me-3">
+                <div class="text-center">
+                    <span class="fw-bold fs-6">© 2025 by Believers Equipping Network: Raising Godly Seeds ❤️</span>
+                    <br>
+                    <span class="small text-muted">Edo University Iyamho, Auchi, Edo State</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" title="Scroll to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+    
+    <script>
+        // Scroll to Top functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            
+            // Show/hide button based on scroll position
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+            
+            // Scroll to top when button is clicked
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        function selectDonation(type) {
+            document.getElementById('donationType').value = type;
+            document.getElementById('donationType').focus();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const donationForm = document.getElementById('donationForm');
+            if (donationForm) {
+                donationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const type = document.getElementById('donationType').value;
+                    const amount = document.getElementById('donationAmount').value;
+                    const name = document.getElementById('donorName').value;
+                    const email = document.getElementById('donorEmail').value;
+                    
+                    if (!type || !amount || !name || !email) {
+                        document.getElementById('donationError').textContent = 'Please fill in all required fields.';
+                        document.getElementById('donationError').style.display = 'block';
+                        document.getElementById('donationSuccess').style.display = 'none';
+                        return;
+                    }
+                    
+                    // Here you would typically integrate with a payment gateway
+                    // For now, just show success message
+                    document.getElementById('donationSuccess').style.display = 'block';
+                    document.getElementById('donationError').style.display = 'none';
+                    donationForm.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(function() {
+                        document.getElementById('donationSuccess').style.display = 'none';
+                    }, 5000);
+                });
+            }
+        });
+    </script>
+</body>
+</html> 
