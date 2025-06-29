@@ -1201,25 +1201,29 @@ firebase.auth().onAuthStateChanged(function(user) {
                 // Ensure loader is visible initially
                 videoLoader.style.display = 'flex';
                 
+                // Only hide loader when video is actually loaded
                 youtubePlayer.addEventListener('load', function() {
-                    // Hide loader after video loads
+                    console.log('✅ YouTube video loaded');
+                    // Keep loader visible for a bit longer to show the animation
                     setTimeout(() => {
                         videoLoader.style.display = 'none';
-                    }, 2000); // Show loader for 2 seconds
+                    }, 3000); // Show loader for 3 seconds after video loads
                 });
                 
                 youtubePlayer.addEventListener('error', function() {
+                    console.log('❌ YouTube video failed to load');
                     // Show error message if video fails to load
                     videoLoader.style.display = 'none';
                     if (youtubeError) youtubeError.style.display = 'block';
                 });
                 
-                // Fallback: hide loader after 10 seconds
+                // Keep loader visible for longer - only hide after 15 seconds as fallback
                 setTimeout(() => {
                     if (videoLoader && videoLoader.style.display !== 'none') {
+                        console.log('⚠️ Hiding loader after timeout');
                         videoLoader.style.display = 'none';
                     }
-                }, 10000);
+                }, 15000); // 15 second timeout
             }
     });
     
