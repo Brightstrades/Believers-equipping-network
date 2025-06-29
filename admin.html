@@ -114,8 +114,8 @@
                 <div class="card admin-card donation-card">
                     <div class="card-body text-center">
                         <i class="bi bi-gift-fill fs-1 mb-2"></i>
-                        <h5>Paystack</h5>
-                        <p class="mb-0">Payment Gateway</p>
+                        <h5 id="totalDonations">₦0</h5>
+                        <p class="mb-0">Total Donations</p>
                     </div>
                 </div>
             </div>
@@ -395,31 +395,39 @@
                 });
                 
                 console.log('📊 Found users:', users.length);
-                document.getElementById('totalUsers').textContent = users.length;
+                const totalUsersElement = document.getElementById('totalUsers');
+                if (totalUsersElement) {
+                    totalUsersElement.textContent = users.length;
+                }
                 
                 const tbody = document.getElementById('usersTableBody');
-                tbody.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${user.displayName || 'N/A'}</td>
-                        <td>${user.email}</td>
-                        <td>${user.lastLogin ? new Date(user.lastLogin.toDate()).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="toggleAdmin('${user.id}', ${!user.isAdmin})">
-                                ${user.isAdmin ? 'Remove Admin' : 'Make Admin'}
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+                if (tbody) {
+                    tbody.innerHTML = users.map(user => `
+                        <tr>
+                            <td>${user.displayName || 'N/A'}</td>
+                            <td>${user.email}</td>
+                            <td>${user.lastLogin ? new Date(user.lastLogin.toDate()).toLocaleDateString() : 'N/A'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="toggleAdmin('${user.id}', ${!user.isAdmin})">
+                                    ${user.isAdmin ? 'Remove Admin' : 'Make Admin'}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
             } catch (error) {
                 console.error('❌ Error loading users:', error);
-                document.getElementById('usersTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center text-danger">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            Error loading users: ${error.message}
-                        </td>
-                    </tr>
-                `;
+                const tbody = document.getElementById('usersTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center text-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Error loading users: ${error.message}
+                            </td>
+                        </tr>
+                    `;
+                }
             }
         }
         
@@ -434,47 +442,55 @@
                 });
                 
                 console.log('📊 Found prayer requests:', requests.length);
-                document.getElementById('totalPrayers').textContent = requests.length;
+                const totalPrayersElement = document.getElementById('totalPrayers');
+                if (totalPrayersElement) {
+                    totalPrayersElement.textContent = requests.length;
+                }
                 
                 const container = document.getElementById('prayerRequestsList');
-                if (requests.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-12">
-                            <div class="alert alert-info text-center">
-                                <i class="bi bi-info-circle me-2"></i>
-                                No prayer requests found. Submit a prayer request from the main website.
+                if (container) {
+                    if (requests.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-12">
+                                <div class="alert alert-info text-center">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    No prayer requests found. Submit a prayer request from the main website.
+                                </div>
                             </div>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = requests.map(request => `
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">${request.name || 'Anonymous'}</h6>
-                                    <p class="card-text">${request.request}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleDateString() : 'N/A'}</small>
-                                        <div>
-                                            <button class="btn btn-sm btn-success" onclick="updatePrayerStatus('${request.id}', 'answered')">Mark Answered</button>
-                                            <button class="btn btn-sm btn-danger" onclick="deletePrayerRequest('${request.id}')">Delete</button>
+                        `;
+                    } else {
+                        container.innerHTML = requests.map(request => `
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">${request.name || 'Anonymous'}</h6>
+                                        <p class="card-text">${request.request}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleDateString() : 'N/A'}</small>
+                                            <div>
+                                                <button class="btn btn-sm btn-success" onclick="updatePrayerStatus('${request.id}', 'answered')">Mark Answered</button>
+                                                <button class="btn btn-sm btn-danger" onclick="deletePrayerRequest('${request.id}')">Delete</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `).join('');
+                        `).join('');
+                    }
                 }
             } catch (error) {
                 console.error('❌ Error loading prayer requests:', error);
-                document.getElementById('prayerRequestsList').innerHTML = `
-                    <div class="col-12">
-                        <div class="alert alert-danger text-center">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            Error loading prayer requests: ${error.message}
+                const container = document.getElementById('prayerRequestsList');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger text-center">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Error loading prayer requests: ${error.message}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
         }
         
@@ -489,44 +505,52 @@
                 });
                 
                 console.log('📊 Found events:', events.length);
-                document.getElementById('totalEvents').textContent = events.length;
+                const totalEventsElement = document.getElementById('totalEvents');
+                if (totalEventsElement) {
+                    totalEventsElement.textContent = events.length;
+                }
                 
                 const container = document.getElementById('eventsList');
-                if (events.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-12">
-                            <div class="alert alert-info text-center">
-                                <i class="bi bi-info-circle me-2"></i>
-                                No events found. Add events using the "Add Event" button.
+                if (container) {
+                    if (events.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-12">
+                                <div class="alert alert-info text-center">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    No events found. Add events using the "Add Event" button.
+                                </div>
                             </div>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = events.map(event => `
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">${event.title}</h6>
-                                    <p class="card-text">${event.description}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">${event.date} at ${event.time}</small>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
+                        `;
+                    } else {
+                        container.innerHTML = events.map(event => `
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">${event.title}</h6>
+                                        <p class="card-text">${event.description}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">${event.date} at ${event.time}</small>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `).join('');
+                        `).join('');
+                    }
                 }
             } catch (error) {
                 console.error('❌ Error loading events:', error);
-                document.getElementById('eventsList').innerHTML = `
-                    <div class="col-12">
-                        <div class="alert alert-danger text-center">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            Error loading events: ${error.message}
+                const container = document.getElementById('eventsList');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger text-center">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Error loading events: ${error.message}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
         }
         
@@ -547,41 +571,49 @@
                 });
                 
                 console.log('📊 Found donations:', donations.length);
-                document.getElementById('totalDonations').textContent = `₦${totalAmount.toLocaleString()}`;
+                const totalDonationsElement = document.getElementById('totalDonations');
+                if (totalDonationsElement) {
+                    totalDonationsElement.textContent = `₦${totalAmount.toLocaleString()}`;
+                }
                 
                 const tbody = document.getElementById('donationsTableBody');
-                if (donations.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center text-muted">
-                                <i class="bi bi-credit-card me-2"></i>
-                                No donations found. Donations are handled by Paystack.
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    tbody.innerHTML = donations.map(donation => `
-                        <tr>
-                            <td>${donation.isAnonymous ? 'Anonymous' : donation.donorName}</td>
-                            <td>₦${donation.amount}</td>
-                            <td>${donation.purpose}</td>
-                            <td>${donation.createdAt ? new Date(donation.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
-                            <td>
-                                <span class="badge bg-${donation.status === 'completed' ? 'success' : 'warning'}">${donation.status}</span>
-                            </td>
-                        </tr>
-                    `).join('');
+                if (tbody) {
+                    if (donations.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    <i class="bi bi-credit-card me-2"></i>
+                                    No donations found. Donations are handled by Paystack.
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        tbody.innerHTML = donations.map(donation => `
+                            <tr>
+                                <td>${donation.isAnonymous ? 'Anonymous' : donation.donorName}</td>
+                                <td>₦${donation.amount}</td>
+                                <td>${donation.purpose}</td>
+                                <td>${donation.createdAt ? new Date(donation.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                                <td>
+                                    <span class="badge bg-${donation.status === 'completed' ? 'success' : 'warning'}">${donation.status}</span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
                 }
             } catch (error) {
                 console.error('❌ Error loading donations:', error);
-                document.getElementById('donationsTableBody').innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center text-danger">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            Error loading donations: ${error.message}
-                        </td>
-                    </tr>
-                `;
+                const tbody = document.getElementById('donationsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Error loading donations: ${error.message}
+                            </td>
+                        </tr>
+                    `;
+                }
             }
         }
         
