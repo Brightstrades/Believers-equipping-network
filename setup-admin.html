@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Setup | Believers Equipping Network</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .top-red-header {
+            background: #d90429;
+            color: #fff;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 15px;
+            padding: 8px 0 6px 20px;
+            margin-bottom: 0;
+        }
+        
+        .ben-logo {
+            height: 48px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-red-header">Raising Godly Seeds</div>
+    
+    <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container-fluid px-3">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <div class="ms-auto">
+                <a href="index.html" class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-house-fill me-1"></i>Home
+                </a>
+                <a href="admin.html" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-gear-fill me-1"></i>Admin Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>Admin Setup
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="loginSection">
+                            <h5 class="mb-3">Step 1: Login to Your Account</h5>
+                            <p class="text-muted mb-4">You need to be logged in to set up admin privileges.</p>
+                            <button id="loginBtn" class="btn btn-primary btn-lg">
+                                <i class="bi bi-google me-2"></i>Login with Google
+                            </button>
+                        </div>
+                        
+                        <div id="setupSection" style="display: none;">
+                            <h5 class="mb-3">Step 2: Set Up Admin Privileges</h5>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Current User:</strong> <span id="currentUser"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Admin Status:</label>
+                                <div id="adminStatus" class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Checking admin status...
+                                </div>
+                            </div>
+                            
+                            <button id="makeAdminBtn" class="btn btn-success btn-lg" style="display: none;">
+                                <i class="bi bi-shield-check me-2"></i>Make Me Admin
+                            </button>
+                            
+                            <div id="successMessage" class="alert alert-success mt-3" style="display: none;">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <strong>Success!</strong> You are now an admin. You can access the admin dashboard.
+                            </div>
+                        </div>
+                        
+                        <div id="instructionsSection" class="mt-4">
+                            <h5>Manual Setup Instructions</h5>
+                            <p>If the automatic setup doesn't work, follow these steps:</p>
+                            <ol>
+                                <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                                <li>Select your project: <strong>believersequippingnetworktv</strong></li>
+                                <li>Click <strong>"Firestore Database"</strong></li>
+                                <li>Find the <strong>users</strong> collection</li>
+                                <li>Click on your user document</li>
+                                <li>Add a new field: <code>isAdmin: true</code></li>
+                                <li>Click <strong>"Update"</strong></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0XEfr4spY_xnxXE0xh7flZqbIlRQ4O20",
+            authDomain: "believersequippingnetworktv.firebaseapp.com",
+            projectId: "believersequippingnetworktv",
+            storageBucket: "believersequippingnetworktv.firebasestorage.app",
+            messagingSenderId: "935792507815",
+            appId: "1:935792507815:web:8f5cdddd87b8bcd97a5482",
+            measurementId: "G-9CLDLB3RQ6"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        let currentUser = null;
+        
+        // Check auth state
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                currentUser = user;
+                document.getElementById('currentUser').textContent = user.email;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('setupSection').style.display = 'block';
+                checkAdminStatus();
+            } else {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('setupSection').style.display = 'none';
+            }
+        });
+        
+        // Login button
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider);
+        });
+        
+        // Check admin status
+        async function checkAdminStatus() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (userDoc.exists && userDoc.data().isAdmin === true) {
+                    document.getElementById('adminStatus').innerHTML = 
+                        '<i class="bi bi-check-circle me-2"></i><strong>You are already an admin!</strong>';
+                    document.getElementById('adminStatus').className = 'alert alert-success';
+                    document.getElementById('makeAdminBtn').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                } else {
+                    document.getElementById('adminStatus').innerHTML = 
+                        '<i class="bi bi-exclamation-triangle me-2"></i><strong>You are not an admin yet.</strong>';
+                    document.getElementById('adminStatus').className = 'alert alert-warning';
+                    document.getElementById('makeAdminBtn').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                document.getElementById('adminStatus').innerHTML = 
+                    '<i class="bi bi-exclamation-triangle me-2"></i><strong>Error checking admin status.</strong>';
+                document.getElementById('adminStatus').className = 'alert alert-danger';
+            }
+        }
+        
+        // Make admin button
+        document.getElementById('makeAdminBtn').addEventListener('click', async function() {
+            try {
+                await db.collection('users').doc(currentUser.uid).set({
+                    email: currentUser.email,
+                    displayName: currentUser.displayName || currentUser.email,
+                    photoURL: currentUser.photoURL,
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isAdmin: true
+                }, { merge: true });
+                
+                document.getElementById('adminStatus').innerHTML = 
+                    '<i class="bi bi-check-circle me-2"></i><strong>You are now an admin!</strong>';
+                document.getElementById('adminStatus').className = 'alert alert-success';
+                document.getElementById('makeAdminBtn').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error making admin:', error);
+                alert('Error setting up admin privileges: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html> 

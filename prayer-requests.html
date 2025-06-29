@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <!-- Custom styles -->
     <style>
         .top-red-header {
@@ -215,6 +219,21 @@
     </button>
     
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0XEfr4spY_xnxXE0xh7flZqbIlRQ4O20",
+            authDomain: "believersequippingnetworktv.firebaseapp.com",
+            projectId: "believersequippingnetworktv",
+            storageBucket: "believersequippingnetworktv.firebasestorage.app",
+            messagingSenderId: "935792507815",
+            appId: "1:935792507815:web:8f5cdddd87b8bcd97a5482",
+            measurementId: "G-9CLDLB3RQ6"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
         // Scroll to Top functionality
         document.addEventListener('DOMContentLoaded', function() {
             const scrollToTopBtn = document.getElementById('scrollToTop');
@@ -235,13 +254,15 @@
                     behavior: 'smooth'
                 });
             });
+            
+            // Initialize prayer form
+            initializePrayerForm();
         });
         
-        // Prayer form handler
-        document.addEventListener('DOMContentLoaded', function() {
+        function initializePrayerForm() {
             const prayerForm = document.getElementById('prayerForm');
             if (prayerForm) {
-                prayerForm.addEventListener('submit', function(e) {
+                prayerForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
                     const name = document.getElementById('prayerName').value;
@@ -249,25 +270,67 @@
                     const anonymous = document.getElementById('prayerAnonymous').checked;
                     
                     if (!request.trim()) {
-                        document.getElementById('prayerError').textContent = 'Please enter your prayer request.';
-                        document.getElementById('prayerError').style.display = 'block';
-                        document.getElementById('prayerSuccess').style.display = 'none';
+                        showError('Please enter your prayer request.');
                         return;
                     }
                     
-                    // Here you would typically send to your backend
-                    // For now, just show success message
-                    document.getElementById('prayerSuccess').style.display = 'block';
-                    document.getElementById('prayerError').style.display = 'none';
-                    prayerForm.reset();
-                    
-                    // Hide success message after 5 seconds
-                    setTimeout(function() {
-                        document.getElementById('prayerSuccess').style.display = 'none';
-                    }, 5000);
+                    try {
+                        // Save prayer request to Firebase
+                        await savePrayerRequest({
+                            name: anonymous ? 'Anonymous' : (name || 'Anonymous'),
+                            request: request,
+                            isAnonymous: anonymous
+                        });
+                        
+                        showSuccess();
+                        prayerForm.reset();
+                        
+                    } catch (error) {
+                        console.error('Error saving prayer request:', error);
+                        showError('Error submitting prayer request. Please try again.');
+                    }
                 });
             }
-        });
+        }
+        
+        async function savePrayerRequest(prayerData) {
+            try {
+                const docRef = await db.collection('prayerRequests').add({
+                    name: prayerData.name,
+                    request: prayerData.request,
+                    isAnonymous: prayerData.isAnonymous,
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                console.log('✅ Prayer request saved with ID:', docRef.id);
+                return docRef.id;
+            } catch (error) {
+                console.error('❌ Error saving prayer request:', error);
+                throw error;
+            }
+        }
+        
+        function showSuccess() {
+            document.getElementById('prayerSuccess').style.display = 'block';
+            document.getElementById('prayerError').style.display = 'none';
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+                document.getElementById('prayerSuccess').style.display = 'none';
+            }, 5000);
+        }
+        
+        function showError(message) {
+            document.getElementById('prayerError').textContent = message;
+            document.getElementById('prayerError').style.display = 'block';
+            document.getElementById('prayerSuccess').style.display = 'none';
+            
+            // Hide error message after 5 seconds
+            setTimeout(function() {
+                document.getElementById('prayerError').style.display = 'none';
+            }, 5000);
+        }
     </script>
 </body>
 </html> 
