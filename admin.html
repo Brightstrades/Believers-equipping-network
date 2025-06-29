@@ -317,14 +317,25 @@
         // Check admin status and load data
         firebase.auth().onAuthStateChanged(async function(user) {
             if (user) {
+                console.log('👤 User logged in:', user.email);
+                
+                // Test database connection first
+                const dbConnected = await testDatabaseConnection();
+                if (!dbConnected) {
+                    return;
+                }
+                
                 const isAdminUser = await checkAdminStatus(user.uid);
                 if (isAdminUser) {
+                    console.log('✅ Admin access granted');
                     loadDashboardData();
                 } else {
+                    console.log('❌ Admin access denied');
                     alert('Access denied. Admin privileges required.');
                     window.location.href = 'index.html';
                 }
             } else {
+                console.log('❌ No user logged in');
                 window.location.href = 'index.html';
             }
         });
@@ -340,18 +351,42 @@
             }
         }
         
+        // Test database connection
+        async function testDatabaseConnection() {
+            console.log('🔍 Testing database connection...');
+            try {
+                // Try to read from a collection
+                const testSnapshot = await db.collection('users').limit(1).get();
+                console.log('✅ Database connection successful');
+                console.log('📊 Collections accessible:', testSnapshot.size >= 0);
+                return true;
+            } catch (error) {
+                console.error('❌ Database connection failed:', error);
+                alert('Database connection failed: ' + error.message);
+                return false;
+            }
+        }
+        
         // Load dashboard data
         async function loadDashboardData() {
-            await Promise.all([
-                loadUsers(),
-                loadPrayerRequests(),
-                loadEvents(),
-                loadDonations()
-            ]);
+            console.log('🔄 Loading dashboard data...');
+            try {
+                await Promise.all([
+                    loadUsers(),
+                    loadPrayerRequests(),
+                    loadEvents(),
+                    loadDonations()
+                ]);
+                console.log('✅ Dashboard data loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading dashboard data:', error);
+                alert('Error loading dashboard data: ' + error.message);
+            }
         }
         
         // Load users
         async function loadUsers() {
+            console.log('🔄 Loading users...');
             try {
                 const snapshot = await db.collection('users').get();
                 const users = [];
@@ -359,6 +394,7 @@
                     users.push({ id: doc.id, ...doc.data() });
                 });
                 
+                console.log('📊 Found users:', users.length);
                 document.getElementById('totalUsers').textContent = users.length;
                 
                 const tbody = document.getElementById('usersTableBody');
@@ -375,12 +411,21 @@
                     </tr>
                 `).join('');
             } catch (error) {
-                console.error('Error loading users:', error);
+                console.error('❌ Error loading users:', error);
+                document.getElementById('usersTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Error loading users: ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
         
         // Load prayer requests
         async function loadPrayerRequests() {
+            console.log('🔄 Loading prayer requests...');
             try {
                 const snapshot = await db.collection('prayerRequests').orderBy('createdAt', 'desc').get();
                 const requests = [];
@@ -388,33 +433,54 @@
                     requests.push({ id: doc.id, ...doc.data() });
                 });
                 
+                console.log('📊 Found prayer requests:', requests.length);
                 document.getElementById('totalPrayers').textContent = requests.length;
                 
                 const container = document.getElementById('prayerRequestsList');
-                container.innerHTML = requests.map(request => `
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">${request.name || 'Anonymous'}</h6>
-                                <p class="card-text">${request.request}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleDateString() : 'N/A'}</small>
-                                    <div>
-                                        <button class="btn btn-sm btn-success" onclick="updatePrayerStatus('${request.id}', 'answered')">Mark Answered</button>
-                                        <button class="btn btn-sm btn-danger" onclick="deletePrayerRequest('${request.id}')">Delete</button>
+                if (requests.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="bi bi-info-circle me-2"></i>
+                                No prayer requests found. Submit a prayer request from the main website.
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = requests.map(request => `
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">${request.name || 'Anonymous'}</h6>
+                                    <p class="card-text">${request.request}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleDateString() : 'N/A'}</small>
+                                        <div>
+                                            <button class="btn btn-sm btn-success" onclick="updatePrayerStatus('${request.id}', 'answered')">Mark Answered</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deletePrayerRequest('${request.id}')">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             } catch (error) {
-                console.error('Error loading prayer requests:', error);
+                console.error('❌ Error loading prayer requests:', error);
+                document.getElementById('prayerRequestsList').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger text-center">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Error loading prayer requests: ${error.message}
+                        </div>
+                    </div>
+                `;
             }
         }
         
         // Load events
         async function loadEvents() {
+            console.log('🔄 Loading events...');
             try {
                 const snapshot = await db.collection('events').orderBy('date', 'asc').get();
                 const events = [];
@@ -422,30 +488,51 @@
                     events.push({ id: doc.id, ...doc.data() });
                 });
                 
+                console.log('📊 Found events:', events.length);
                 document.getElementById('totalEvents').textContent = events.length;
                 
                 const container = document.getElementById('eventsList');
-                container.innerHTML = events.map(event => `
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">${event.title}</h6>
-                                <p class="card-text">${event.description}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">${event.date} at ${event.time}</small>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
+                if (events.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="bi bi-info-circle me-2"></i>
+                                No events found. Add events using the "Add Event" button.
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = events.map(event => `
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">${event.title}</h6>
+                                    <p class="card-text">${event.description}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">${event.date} at ${event.time}</small>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             } catch (error) {
-                console.error('Error loading events:', error);
+                console.error('❌ Error loading events:', error);
+                document.getElementById('eventsList').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger text-center">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Error loading events: ${error.message}
+                        </div>
+                    </div>
+                `;
             }
         }
         
         // Load donations
         async function loadDonations() {
+            console.log('🔄 Loading donations...');
             try {
                 const snapshot = await db.collection('donations').orderBy('createdAt', 'desc').get();
                 const donations = [];
@@ -459,22 +546,42 @@
                     }
                 });
                 
+                console.log('📊 Found donations:', donations.length);
                 document.getElementById('totalDonations').textContent = `₦${totalAmount.toLocaleString()}`;
                 
                 const tbody = document.getElementById('donationsTableBody');
-                tbody.innerHTML = donations.map(donation => `
+                if (donations.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                <i class="bi bi-credit-card me-2"></i>
+                                No donations found. Donations are handled by Paystack.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tbody.innerHTML = donations.map(donation => `
+                        <tr>
+                            <td>${donation.isAnonymous ? 'Anonymous' : donation.donorName}</td>
+                            <td>₦${donation.amount}</td>
+                            <td>${donation.purpose}</td>
+                            <td>${donation.createdAt ? new Date(donation.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                            <td>
+                                <span class="badge bg-${donation.status === 'completed' ? 'success' : 'warning'}">${donation.status}</span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('❌ Error loading donations:', error);
+                document.getElementById('donationsTableBody').innerHTML = `
                     <tr>
-                        <td>${donation.isAnonymous ? 'Anonymous' : donation.donorName}</td>
-                        <td>₦${donation.amount}</td>
-                        <td>${donation.purpose}</td>
-                        <td>${donation.createdAt ? new Date(donation.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <span class="badge bg-${donation.status === 'completed' ? 'success' : 'warning'}">${donation.status}</span>
+                        <td colspan="5" class="text-center text-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Error loading donations: ${error.message}
                         </td>
                     </tr>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading donations:', error);
+                `;
             }
         }
         
