@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Believers Equipping Network</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .top-red-header {
+            background: #d90429;
+            color: #fff;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 15px;
+            padding: 8px 0 6px 20px;
+            margin-bottom: 0;
+        }
+        
+        .ben-logo {
+            height: 48px;
+            width: auto;
+        }
+        
+        .admin-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .prayer-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .event-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .donation-card {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-red-header">Raising Godly Seeds</div>
+    
+    <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container-fluid px-3">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <div class="ms-auto">
+                <a href="index.html" class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-house-fill me-1"></i>Home
+                </a>
+                <button id="logoutBtn" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="text-center mb-3">Admin Dashboard</h2>
+                <p class="text-center text-muted">Manage your church website data</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card stats-card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people-fill fs-1 mb-2"></i>
+                        <h5 id="totalUsers">0</h5>
+                        <p class="mb-0">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card prayer-card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-heart-fill fs-1 mb-2"></i>
+                        <h5 id="totalPrayers">0</h5>
+                        <p class="mb-0">Prayer Requests</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card event-card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calendar-event fs-1 mb-2"></i>
+                        <h5 id="totalEvents">0</h5>
+                        <p class="mb-0">Events</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card admin-card donation-card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-gift-fill fs-1 mb-2"></i>
+                        <h5 id="totalDonations">₦0</h5>
+                        <p class="mb-0">Total Donations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="prayers-tab" data-bs-toggle="tab" data-bs-target="#prayers" type="button" role="tab">
+                    <i class="bi bi-heart-fill me-1"></i>Prayer Requests
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
+                    <i class="bi bi-calendar-event me-1"></i>Events
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                    <i class="bi bi-people-fill me-1"></i>Users
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations" type="button" role="tab">
+                    <i class="bi bi-gift-fill me-1"></i>Donations
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="adminTabContent">
+            <!-- Prayer Requests Tab -->
+            <div class="tab-pane fade show active" id="prayers" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Prayer Requests</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="prayerRequestsList" class="row">
+                            <!-- Prayer requests will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Tab -->
+            <div class="tab-pane fade" id="events" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Events</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                            <i class="bi bi-plus-circle me-1"></i>Add Event
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="eventsList" class="row">
+                            <!-- Events will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="tab-pane fade" id="users" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Registered Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donations Tab -->
+            <div class="tab-pane fade" id="donations" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Donations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Donor</th>
+                                        <th>Amount</th>
+                                        <th>Purpose</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="donationsTableBody">
+                                    <!-- Donations will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div class="modal fade" id="addEventModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addEventForm">
+                        <div class="mb-3">
+                            <label class="form-label">Event Title</label>
+                            <input type="text" class="form-control" id="eventTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="eventDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="eventDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Time</label>
+                                    <input type="time" class="form-control" id="eventTime" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" id="eventLocation" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEvent()">Save Event</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0XEfr4spY_xnxXE0xh7flZqbIlRQ4O20",
+            authDomain: "believersequippingnetworktv.firebaseapp.com",
+            projectId: "believersequippingnetworktv",
+            storageBucket: "believersequippingnetworktv.firebasestorage.app",
+            messagingSenderId: "935792507815",
+            appId: "1:935792507815:web:8f5cdddd87b8bcd97a5482",
+            measurementId: "G-9CLDLB3RQ6"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Check admin status and load data
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (user) {
+                const isAdminUser = await checkAdminStatus(user.uid);
+                if (isAdminUser) {
+                    loadDashboardData();
+                } else {
+                    alert('Access denied. Admin privileges required.');
+                    window.location.href = 'index.html';
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Check if user is admin
+        async function checkAdminStatus(userId) {
+            try {
+                const userDoc = await db.collection('users').doc(userId).get();
+                return userDoc.exists && userDoc.data().isAdmin === true;
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                return false;
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            await Promise.all([
+                loadUsers(),
+                loadPrayerRequests(),
+                loadEvents(),
+                loadDonations()
+            ]);
+        }
+        
+        // Load users
+        async function loadUsers() {
+            try {
+                const snapshot = await db.collection('users').get();
+                const users = [];
+                snapshot.forEach(doc => {
+                    users.push({ id: doc.id, ...doc.data() });
+                });
+                
+                document.getElementById('totalUsers').textContent = users.length;
+                
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>${user.displayName || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td>${user.lastLogin ? new Date(user.lastLogin.toDate()).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="toggleAdmin('${user.id}', ${!user.isAdmin})">
+                                ${user.isAdmin ? 'Remove Admin' : 'Make Admin'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+        
+        // Load prayer requests
+        async function loadPrayerRequests() {
+            try {
+                const snapshot = await db.collection('prayerRequests').orderBy('createdAt', 'desc').get();
+                const requests = [];
+                snapshot.forEach(doc => {
+                    requests.push({ id: doc.id, ...doc.data() });
+                });
+                
+                document.getElementById('totalPrayers').textContent = requests.length;
+                
+                const container = document.getElementById('prayerRequestsList');
+                container.innerHTML = requests.map(request => `
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">${request.name || 'Anonymous'}</h6>
+                                <p class="card-text">${request.request}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleDateString() : 'N/A'}</small>
+                                    <div>
+                                        <button class="btn btn-sm btn-success" onclick="updatePrayerStatus('${request.id}', 'answered')">Mark Answered</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deletePrayerRequest('${request.id}')">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading prayer requests:', error);
+            }
+        }
+        
+        // Load events
+        async function loadEvents() {
+            try {
+                const snapshot = await db.collection('events').orderBy('date', 'asc').get();
+                const events = [];
+                snapshot.forEach(doc => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                
+                document.getElementById('totalEvents').textContent = events.length;
+                
+                const container = document.getElementById('eventsList');
+                container.innerHTML = events.map(event => `
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">${event.title}</h6>
+                                <p class="card-text">${event.description}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${event.date} at ${event.time}</small>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+        
+        // Load donations
+        async function loadDonations() {
+            try {
+                const snapshot = await db.collection('donations').orderBy('createdAt', 'desc').get();
+                const donations = [];
+                let totalAmount = 0;
+                
+                snapshot.forEach(doc => {
+                    const donation = { id: doc.id, ...doc.data() };
+                    donations.push(donation);
+                    if (donation.status === 'completed') {
+                        totalAmount += parseFloat(donation.amount) || 0;
+                    }
+                });
+                
+                document.getElementById('totalDonations').textContent = `₦${totalAmount.toLocaleString()}`;
+                
+                const tbody = document.getElementById('donationsTableBody');
+                tbody.innerHTML = donations.map(donation => `
+                    <tr>
+                        <td>${donation.isAnonymous ? 'Anonymous' : donation.donorName}</td>
+                        <td>₦${donation.amount}</td>
+                        <td>${donation.purpose}</td>
+                        <td>${donation.createdAt ? new Date(donation.createdAt.toDate()).toLocaleDateString() : 'N/A'}</td>
+                        <td>
+                            <span class="badge bg-${donation.status === 'completed' ? 'success' : 'warning'}">${donation.status}</span>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading donations:', error);
+            }
+        }
+        
+        // Save new event
+        async function saveEvent() {
+            try {
+                const event = {
+                    title: document.getElementById('eventTitle').value,
+                    description: document.getElementById('eventDescription').value,
+                    date: document.getElementById('eventDate').value,
+                    time: document.getElementById('eventTime').value,
+                    location: document.getElementById('eventLocation').value
+                };
+                
+                await db.collection('events').add({
+                    ...event,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Close modal and reload
+                bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
+                document.getElementById('addEventForm').reset();
+                loadEvents();
+                
+                alert('Event saved successfully!');
+            } catch (error) {
+                console.error('Error saving event:', error);
+                alert('Error saving event: ' + error.message);
+            }
+        }
+        
+        // Update prayer request status
+        async function updatePrayerStatus(requestId, status) {
+            try {
+                await db.collection('prayerRequests').doc(requestId).update({
+                    status: status,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                loadPrayerRequests();
+            } catch (error) {
+                console.error('Error updating prayer request:', error);
+                alert('Error updating prayer request: ' + error.message);
+            }
+        }
+        
+        // Delete prayer request
+        async function deletePrayerRequest(requestId) {
+            if (confirm('Are you sure you want to delete this prayer request?')) {
+                try {
+                    await db.collection('prayerRequests').doc(requestId).delete();
+                    loadPrayerRequests();
+                } catch (error) {
+                    console.error('Error deleting prayer request:', error);
+                    alert('Error deleting prayer request: ' + error.message);
+                }
+            }
+        }
+        
+        // Delete event
+        async function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                try {
+                    await db.collection('events').doc(eventId).delete();
+                    loadEvents();
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    alert('Error deleting event: ' + error.message);
+                }
+            }
+        }
+        
+        // Toggle admin status
+        async function toggleAdmin(userId, isAdmin) {
+            try {
+                await db.collection('users').doc(userId).update({
+                    isAdmin: isAdmin
+                });
+                loadUsers();
+            } catch (error) {
+                console.error('Error updating admin status:', error);
+                alert('Error updating admin status: ' + error.message);
+            }
+        }
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -285,6 +285,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 <!-- Firebase Auth (for login) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<!-- Firebase Firestore (for database) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- Firebase Storage (for file uploads) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script>
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -300,15 +304,273 @@
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
   
+  // Initialize Firestore Database
+  const db = firebase.firestore();
+  
+  // Initialize Firebase Storage
+  const storage = firebase.storage();
+  
   // Set persistence to LOCAL to maintain login state across page refreshes
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
+  // ===== FIRESTORE DATABASE FUNCTIONS =====
+  
+  // Save user profile to database
+  async function saveUserProfile(user) {
+    try {
+      await db.collection('users').doc(user.uid).set({
+        email: user.email,
+        displayName: user.displayName || user.email,
+        photoURL: user.photoURL,
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+      console.log('✅ User profile saved to database');
+    } catch (error) {
+      console.error('❌ Error saving user profile:', error);
+    }
+  }
+  
+  // Save prayer request to database
+  async function savePrayerRequest(request) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        throw new Error('User must be logged in to submit prayer requests');
+      }
+      
+      const docRef = await db.collection('prayerRequests').add({
+        name: request.name,
+        email: request.email,
+        request: request.request,
+        isAnonymous: request.isAnonymous || false,
+        userId: user.uid,
+        userEmail: user.email,
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      console.log('✅ Prayer request saved with ID:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('❌ Error saving prayer request:', error);
+      throw error;
+    }
+  }
+  
+  // Get prayer requests from database
+  async function getPrayerRequests() {
+    try {
+      const snapshot = await db.collection('prayerRequests')
+        .orderBy('createdAt', 'desc')
+        .limit(50)
+        .get();
+      
+      const requests = [];
+      snapshot.forEach(doc => {
+        requests.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      return requests;
+    } catch (error) {
+      console.error('❌ Error getting prayer requests:', error);
+      return [];
+    }
+  }
+  
+  // Save event to database
+  async function saveEvent(event) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        throw new Error('User must be logged in to create events');
+      }
+      
+      const docRef = await db.collection('events').add({
+        title: event.title,
+        description: event.description,
+        date: event.date,
+        time: event.time,
+        location: event.location,
+        createdBy: user.uid,
+        createdByEmail: user.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      console.log('✅ Event saved with ID:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('❌ Error saving event:', error);
+      throw error;
+    }
+  }
+  
+  // Get events from database
+  async function getEvents() {
+    try {
+      const snapshot = await db.collection('events')
+        .orderBy('date', 'asc')
+        .limit(20)
+        .get();
+      
+      const events = [];
+      snapshot.forEach(doc => {
+        events.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      return events;
+    } catch (error) {
+      console.error('❌ Error getting events:', error);
+      return [];
+    }
+  }
+  
+  // Save donation record
+  async function saveDonation(donation) {
+    try {
+      const user = firebase.auth().currentUser;
+      const docRef = await db.collection('donations').add({
+        amount: donation.amount,
+        currency: donation.currency || 'NGN',
+        purpose: donation.purpose,
+        donorName: donation.donorName,
+        donorEmail: donation.donorEmail,
+        isAnonymous: donation.isAnonymous || false,
+        userId: user ? user.uid : null,
+        userEmail: user ? user.email : null,
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      console.log('✅ Donation record saved with ID:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('❌ Error saving donation:', error);
+      throw error;
+    }
+  }
+  
+  // ===== ADMIN FUNCTIONS =====
+  
+  // Check if user is admin
+  async function isAdmin(userId) {
+    try {
+      const userDoc = await db.collection('users').doc(userId).get();
+      return userDoc.exists && userDoc.data().isAdmin === true;
+    } catch (error) {
+      console.error('❌ Error checking admin status:', error);
+      return false;
+    }
+  }
+  
+  // Get all users (admin only)
+  async function getAllUsers() {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user || !(await isAdmin(user.uid))) {
+        throw new Error('Admin access required');
+      }
+      
+      const snapshot = await db.collection('users').get();
+      const users = [];
+      snapshot.forEach(doc => {
+        users.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      return users;
+    } catch (error) {
+      console.error('❌ Error getting users:', error);
+      return [];
+    }
+  }
+  
+  // Update prayer request status
+  async function updatePrayerRequestStatus(requestId, status) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user || !(await isAdmin(user.uid))) {
+        throw new Error('Admin access required');
+      }
+      
+      await db.collection('prayerRequests').doc(requestId).update({
+        status: status,
+        updatedBy: user.uid,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      console.log('✅ Prayer request status updated');
+    } catch (error) {
+      console.error('❌ Error updating prayer request:', error);
+      throw error;
+    }
+  }
+  
+  // Delete prayer request
+  async function deletePrayerRequest(requestId) {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user || !(await isAdmin(user.uid))) {
+        throw new Error('Admin access required');
+      }
+      
+      await db.collection('prayerRequests').doc(requestId).delete();
+      console.log('✅ Prayer request deleted');
+    } catch (error) {
+      console.error('❌ Error deleting prayer request:', error);
+      throw error;
+    }
+  }
+  
+  // Get donation statistics
+  async function getDonationStats() {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user || !(await isAdmin(user.uid))) {
+        throw new Error('Admin access required');
+      }
+      
+      const snapshot = await db.collection('donations').get();
+      let totalAmount = 0;
+      let totalDonations = 0;
+      
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.status === 'completed') {
+          totalAmount += parseFloat(data.amount) || 0;
+          totalDonations++;
+        }
+      });
+      
+      return {
+        totalAmount: totalAmount,
+        totalDonations: totalDonations,
+        averageDonation: totalDonations > 0 ? totalAmount / totalDonations : 0
+      };
+    } catch (error) {
+      console.error('❌ Error getting donation stats:', error);
+      return { totalAmount: 0, totalDonations: 0, averageDonation: 0 };
+    }
+  }
+  
   // Firebase Auth State Listener - CRITICAL for handling login/logout
 firebase.auth().onAuthStateChanged(function(user) {
     console.log('🔄 Auth state changed:', user ? 'User logged in' : 'User logged out');
     
     if (user) {
       console.log('✅ User is signed in:', user.email);
+      
+      // Save user profile to database
+      saveUserProfile(user);
+      
       // Update profile menu
       var profileName = document.getElementById('profileDropdownName');
       var profileEmail = document.getElementById('profileDropdownEmail');
