@@ -24,10 +24,11 @@
         .ben-bounce-loader-img {
             width: 54px;
             height: 54px;
-            animation: ben-bounce 2s infinite ease-in-out;
+            animation: ben-bounce 1.5s infinite ease-in-out;
             user-select: none;
             pointer-events: none;
             display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
         
         /* Ensure body takes full height */
@@ -163,8 +164,8 @@
         
         .ben-video-loader {
             position: absolute;
-            bottom: 12px;
-            left: 24px;
+            bottom: 20px;
+            left: 20px;
             z-index: 10;
             pointer-events: none;
             width: 54px;
@@ -1236,13 +1237,18 @@ firebase.auth().onAuthStateChanged(function(user) {
             if (youtubePlayer && videoLoader) {
                 // Ensure loader is visible initially
                 videoLoader.style.display = 'flex';
+                videoLoader.style.opacity = '1';
+                console.log('🎬 Video loader displayed at bottom left');
                 
                 // Only hide loader when video is actually loaded
                 youtubePlayer.addEventListener('load', function() {
                     console.log('✅ YouTube video loaded');
                     // Keep loader visible for a bit longer to show the animation
                     setTimeout(() => {
-                        videoLoader.style.display = 'none';
+                        videoLoader.style.opacity = '0';
+                        setTimeout(() => {
+                            videoLoader.style.display = 'none';
+                        }, 300);
                     }, 3000); // Show loader for 3 seconds after video loads
                 });
                 
@@ -1257,7 +1263,10 @@ firebase.auth().onAuthStateChanged(function(user) {
                 setTimeout(() => {
                     if (videoLoader && videoLoader.style.display !== 'none') {
                         console.log('⚠️ Hiding loader after timeout');
-                        videoLoader.style.display = 'none';
+                        videoLoader.style.opacity = '0';
+                        setTimeout(() => {
+                            videoLoader.style.display = 'none';
+                        }, 300);
                     }
                 }, 15000); // 15 second timeout
             }
