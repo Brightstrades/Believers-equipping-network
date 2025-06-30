@@ -35,51 +35,6 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Push notification event
-self.addEventListener('push', event => {
-  console.log('Push notification received:', event);
-  
-  const options = {
-    body: event.data ? event.data.text() : 'New update from Believers Equipping Network',
-    icon: './images/logo.png',
-    badge: './images/logo.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'View',
-        icon: './images/logo.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: './images/logo.png'
-      }
-    ]
-  };
-
-  event.waitUntil(
-    self.registration.showNotification('Believers Equipping Network', options)
-  );
-});
-
-// Notification click event
-self.addEventListener('notificationclick', event => {
-  console.log('Notification clicked:', event);
-  
-  event.notification.close();
-
-  if (event.action === 'explore') {
-    event.waitUntil(
-      clients.openWindow('./')
-    );
-  }
-});
-
 // Activate event - clean up old caches
 self.addEventListener('activate', event => {
   console.log('Service Worker activating...');

@@ -155,11 +155,11 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.08);
+            background: rgba(0,0,0,0.18); /* slightly darker for visibility */
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
+            z-index: 99999; /* higher than anything else */
             backdrop-filter: blur(2px);
         }
         
@@ -172,7 +172,7 @@
         .auth-box {
             background: #fff;
             border-radius: 16px;
-            box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.18);
             border: 1.5px solid rgba(0,0,0,0.08);
             max-width: 400px;
             width: 100%;
@@ -375,6 +375,10 @@
                 transform: translateX(-50%);
                 top: 40%;
             }
+        }
+        
+        body.modal-open {
+            overflow: hidden;
         }
     </style>
     <!-- Firebase App (the core Firebase SDK) -->
@@ -1294,24 +1298,21 @@ firebase.auth().onAuthStateChanged(function(user) {
     function showAccountSettings() {
         const modal = document.getElementById('accountSettingsModal');
         const currentUser = firebase.auth().currentUser;
-        
         if (!currentUser) {
             alert('Please log in to access account settings');
             return;
         }
-        
         // Populate form with current user data
         const displayNameInput = document.getElementById('settingsDisplayName');
         const emailInput = document.getElementById('settingsEmail');
         const passwordInput = document.getElementById('settingsPassword');
-        
         if (displayNameInput) displayNameInput.value = currentUser.displayName || '';
         if (emailInput) emailInput.value = currentUser.email || '';
         if (passwordInput) passwordInput.value = '';
-        
         // Show modal
         if (modal) modal.style.display = 'flex';
-        
+        // Prevent background scroll and stacking issues
+        document.body.classList.add('modal-open');
         // Hide profile dropdown
         const dropdown = document.getElementById('profileDropdown');
         if (dropdown) dropdown.style.display = 'none';
@@ -1320,7 +1321,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     function closeAccountSettings() {
         const modal = document.getElementById('accountSettingsModal');
         if (modal) modal.style.display = 'none';
-        
+        // Restore background scroll
+        document.body.classList.remove('modal-open');
         // Clear error/success messages
         const errorDiv = document.getElementById('accountSettingsError');
         const successDiv = document.getElementById('accountSettingsSuccess');
@@ -1413,47 +1415,6 @@ firebase.auth().onAuthStateChanged(function(user) {
             }
         }
     }
-    
-    // PWA Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('./sw.js')
-                .then(function(registration) {
-                    console.log('✅ Service Worker registered successfully:', registration.scope);
-                    
-                    // Request notification permission
-                    if ('Notification' in window) {
-                        Notification.requestPermission().then(function(permission) {
-                            if (permission === 'granted') {
-                                console.log('✅ Notification permission granted');
-                            } else {
-                                console.log('❌ Notification permission denied');
-                            }
-                        });
-                    }
-                })
-                .catch(function(error) {
-                    console.log('❌ Service Worker registration failed:', error);
-                });
-        });
-    }
-    
-    // PWA Install Prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        console.log('📱 PWA install prompt available');
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // You can show a custom install button here if needed
-        // showInstallButton();
-    });
-    
-    // PWA App Installed Event
-    window.addEventListener('appinstalled', (evt) => {
-        console.log('🎉 PWA installed successfully');
-        deferredPrompt = null;
-    });
-    </script>
+</script>
 </body>
 </html>
