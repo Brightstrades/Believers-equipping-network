@@ -127,6 +127,8 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        // Ensure persistent login
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
         
         let currentUser = null;
         
