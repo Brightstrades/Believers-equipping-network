@@ -534,8 +534,15 @@
   // Initialize Firebase Storage
   const storage = firebase.storage();
   
-  // Set persistence to LOCAL to maintain login state across page refreshes
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  // Set persistence to LOCAL immediately after Firebase initialization
+  // This ensures users stay logged in across browser sessions
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(function() {
+      console.log('✅ Firebase persistence set to LOCAL - users will stay logged in');
+    })
+    .catch(function(error) {
+      console.error('❌ Error setting persistence:', error);
+    });
 
   // ===== FIRESTORE DATABASE FUNCTIONS =====
   
@@ -789,6 +796,11 @@
 firebase.auth().onAuthStateChanged(function(user) {
     console.log('🔄 Auth state changed:', user ? 'User logged in' : 'User logged out');
     
+    // Check if we're in a private/incognito window which might affect persistence
+    if (window.navigator.userAgent.includes('Chrome') && window.chrome && window.chrome.webstore === undefined) {
+        console.log('⚠️ Possible incognito/private window detected - persistence may be limited');
+    }
+    
     // Hide page loader after auth state is determined
     const pageLoader = document.getElementById('pageLoader');
     if (pageLoader) {
@@ -802,6 +814,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     
     if (user) {
       console.log('✅ User is signed in:', user.email);
+      console.log('🔐 User UID:', user.uid);
+      console.log('📅 Last sign-in time:', user.metadata.lastSignInTime);
       
       // Save user profile to database
       saveUserProfile(user);
@@ -832,6 +846,12 @@ firebase.auth().onAuthStateChanged(function(user) {
       updateGreetingMessage();
   } else {
       console.log('❌ User is signed out');
+      console.log('💡 This might be due to:');
+      console.log('   - User manually logged out');
+      console.log('   - Browser cleared cookies/storage');
+      console.log('   - Incognito/private browsing mode');
+      console.log('   - Browser security settings');
+      
       // Show login, hide main content
       var loginContainer = document.getElementById('loginContainer');
       var mainContent = document.getElementById('mainContent');
@@ -1141,6 +1161,27 @@ firebase.auth().onAuthStateChanged(function(user) {
         }
     }
   }
+
+  // Check current persistence state
+  function checkPersistenceState() {
+    firebase.auth().getRedirectResult().then(function(result) {
+      console.log('🔄 Checking persistence state...');
+      const currentUser = firebase.auth().currentUser;
+      if (currentUser) {
+        console.log('✅ User is currently logged in:', currentUser.email);
+        console.log('🔐 Persistence is working correctly');
+      } else {
+        console.log('❌ No user currently logged in');
+        console.log('💡 This could be due to:');
+        console.log('   - First time visit');
+        console.log('   - Browser cleared data');
+        console.log('   - Incognito mode');
+      }
+    });
+  }
+  
+  // Call persistence check after a short delay
+  setTimeout(checkPersistenceState, 1000);
 </script>
 
 </head>
@@ -1231,6 +1272,12 @@ firebase.auth().onAuthStateChanged(function(user) {
                     <span class="text-muted">Don't have an account?</span>
                     <a href="#" onclick="showSignupForm();return false;" class="text-danger fw-bold ms-1">Sign Up</a>
                 </div>
+                <div class="text-center mt-2">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        You'll stay logged in until you sign out
+                    </small>
+                </div>
                 <div id="loginError" class="text-danger mt-3 text-center" style="display:none;"></div>
             </div>
             <!-- Signup Form -->
@@ -1253,6 +1300,12 @@ firebase.auth().onAuthStateChanged(function(user) {
                 <div class="text-center mt-4">
                     <span class="text-muted">Already have an account?</span>
                     <a href="#" onclick="showLoginForm();return false;" class="text-danger fw-bold ms-1">Login</a>
+                </div>
+                <div class="text-center mt-2">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        You'll stay logged in until you sign out
+                    </small>
                 </div>
                 <div id="signupError" class="text-danger mt-3 text-center" style="display:none;"></div>
                 <div id="signupSuccess" class="text-success mt-2 text-center" style="display:none;"></div>
