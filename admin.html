@@ -23,6 +23,35 @@
             height: 48px;
             width: auto;
         }
+        /* Image optimization styles */
+        .optimized-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .lazy-image.loaded {
+            opacity: 1;
+        }
+        
+        /* Responsive image sizes */
+        @media (max-width: 768px) {
+            .ben-logo {
+                height: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .ben-logo {
+                height: 35px;
+            }
+        }
+
         
         .admin-card {
             border: 1px solid #e0e0e0;
@@ -61,7 +90,7 @@
     
     <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
         <div class="container-fluid px-3">
-            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo optimized-image" loading="eager">
             <div class="ms-auto">
                 <a href="index.html" class="btn btn-outline-primary btn-sm me-2">
                     <i class="bi bi-house-fill me-1"></i>Home
@@ -291,7 +320,55 @@
     </div>
 
     <!-- Firebase Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+        // Image Optimization and Lazy Loading
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize lazy loading for images
+            const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.classList.add('loaded');
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                });
+                
+                lazyImages.forEach(img => {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // Fallback for browsers without IntersectionObserver
+                lazyImages.forEach(img => {
+                    img.classList.add('loaded');
+                });
+            }
+            
+            // Optimize image loading performance
+            const optimizeImages = () => {
+                const images = document.querySelectorAll('img.optimized-image');
+                images.forEach(img => {
+                    // Add error handling
+                    img.addEventListener('error', function() {
+                        console.warn('Image failed to load:', this.src);
+                        this.style.display = 'none';
+                    });
+                    
+                    // Add load event for performance tracking
+                    img.addEventListener('load', function() {
+                        this.classList.add('loaded');
+                        console.log('Image loaded successfully:', this.src);
+                    });
+                });
+            };
+            
+            optimizeImages();
+        });
+
+    </script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     

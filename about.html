@@ -22,6 +22,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./images/logo.png">
     <link rel="apple-touch-icon" href="./images/app logo.png">
     
+    <!-- Preload critical images -->
+    <link rel="preload" as="image" href="./images/logo.png">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -54,6 +57,35 @@
         .ben-logo {
             height: 48px;
             width: auto;
+        }
+        
+        /* Image optimization styles */
+        .optimized-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .lazy-image {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .lazy-image.loaded {
+            opacity: 1;
+        }
+        
+        /* Responsive image sizes */
+        @media (max-width: 768px) {
+            .ben-logo {
+                height: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .ben-logo {
+                height: 35px;
+            }
         }
         
         .ben-footer {
@@ -107,7 +139,7 @@
     
     <header class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="height:56px; min-height:0;">
         <div class="container-fluid px-3">
-            <img src="images/logo.png" alt="BEN Logo" class="ben-logo">
+            <img src="images/logo.png" alt="BEN Logo" class="ben-logo optimized-image" loading="eager">
             <div class="ms-auto">
                 <a href="https://facebook.com/believersequippingnetwork" target="_blank" class="btn btn-outline-primary btn-sm me-2">
                     <i class="bi bi-facebook"></i>
@@ -186,7 +218,7 @@
     <footer class="ben-footer">
         <div class="container">
             <div class="d-flex align-items-center justify-content-center">
-                <img src="images/logo.png" alt="BEN Logo" class="ben-logo me-3">
+                <img src="images/logo.png" alt="BEN Logo" class="ben-logo me-3 optimized-image" loading="lazy">
                 <div class="ben-footer-content">
                     <div class="text-center">
                         <span class="fw-bold small">© 2025 by Believers Equipping Network: Raising Godly Seeds</span>
@@ -241,6 +273,53 @@
                     });
             });
         }
+        
+        // Image Optimization and Lazy Loading
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize lazy loading for images
+            const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.classList.add('loaded');
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                });
+                
+                lazyImages.forEach(img => {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // Fallback for browsers without IntersectionObserver
+                lazyImages.forEach(img => {
+                    img.classList.add('loaded');
+                });
+            }
+            
+            // Optimize image loading performance
+            const optimizeImages = () => {
+                const images = document.querySelectorAll('img.optimized-image');
+                images.forEach(img => {
+                    // Add error handling
+                    img.addEventListener('error', function() {
+                        console.warn('Image failed to load:', this.src);
+                        this.style.display = 'none';
+                    });
+                    
+                    // Add load event for performance tracking
+                    img.addEventListener('load', function() {
+                        this.classList.add('loaded');
+                        console.log('Image loaded successfully:', this.src);
+                    });
+                });
+            };
+            
+            optimizeImages();
+        });
     </script>
 </body>
 </html>
