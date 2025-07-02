@@ -1444,6 +1444,9 @@ firebase.auth().onAuthStateChanged(function(user) {
                             </h5>
                             <p class="card-text">Join us for our live Sunday service and midweek programs.</p>
                             <div class="d-grid gap-2">
+                                <button class="btn btn-success" id="openJitsiModalBtn" type="button">
+                                    <i class="bi bi-camera-video-fill me-1"></i>Join Virtual Meeting
+                                </button>
                                 <a href="events.html" class="btn btn-outline-primary">
                                     <i class="bi bi-calendar-event me-1"></i>View Schedule
                                 </a>
@@ -1731,6 +1734,46 @@ firebase.auth().onAuthStateChanged(function(user) {
             
             optimizeImages();
         });
+    </script>
+    <!-- Jitsi Meet Modal -->
+    <div class="modal fade" id="jitsiMeetModal" tabindex="-1" aria-labelledby="jitsiMeetModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="jitsiMeetModalLabel"><i class="bi bi-camera-video-fill me-2"></i>Virtual Meeting Room</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="min-height: 600px;">
+            <div id="meetJitsiContainer" style="width:100%; height:600px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://meet.init7.net/external_api.js"></script>
+    <script>
+      let jitsiApi = null;
+      document.getElementById('openJitsiModalBtn').addEventListener('click', function() {
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('jitsiMeetModal'));
+        modal.show();
+        // Only initialize once
+        if (!jitsiApi) {
+          jitsiApi = new JitsiMeetExternalAPI('meet.init7.net', {
+            roomName: 'BENChurchMeeting',
+            parentNode: document.querySelector('#meetJitsiContainer'),
+            width: '100%',
+            height: 600
+          });
+        }
+      });
+      // Optional: Clean up Jitsi when modal is closed
+      document.getElementById('jitsiMeetModal').addEventListener('hidden.bs.modal', function () {
+        if (jitsiApi) {
+          jitsiApi.dispose();
+          jitsiApi = null;
+          document.getElementById('meetJitsiContainer').innerHTML = '';
+        }
+      });
     </script>
 </body>
 </html>
